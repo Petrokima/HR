@@ -134,10 +134,17 @@ main{padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px))}
   <button class="btn ghost" data-act="signout" data-t="signOut"></button>
 </div></div></section>
 
+<!-- INSTALL FIRST (iPhone) -->
+<section class="screen" id="scr-install"><div class="center"><div style="width:100%;max-width:400px;text-align:center">
+  <div class="logo">PK</div><h1 data-t="installTitle"></h1>
+  <div class="card" style="margin-top:18px;text-align:start;line-height:1.9"><div data-t="installText" style="margin-bottom:10px"></div><div id="ios-steps" style="white-space:pre-line;font-weight:700"></div></div>
+  <button class="iconbtn" data-lang>English</button>
+</div></div></section>
+
 <!-- MESSAGE (no access etc.) -->
 <section class="screen" id="scr-msg"><div class="center"><div style="width:100%;max-width:400px;text-align:center">
   <div class="logo">PK</div><div class="card" id="msg-body" style="line-height:1.8"></div>
-  <button class="btn ghost" data-act="signout" data-t="signOut"></button>
+  <button class="btn ghost" data-act="signout" data-t="back"></button>
 </div></div></section>
 
 <!-- MAIN -->
@@ -241,7 +248,15 @@ const T = {
   lt:{Annual:'Annual',Casual:'Casual',Sick:'Sick',Unpaid:'Unpaid','Other paid':'Other paid'},
   pt:{'Late arrival':'Late arrival','Early leave':'Early leave'},
   ht:{'HR letter':'HR letter','Salary certificate':'Salary certificate','Experience certificate':'Experience certificate','Update my personal data':'Update my personal data','Payslip copy':'Payslip copy','Loan request':'Loan request','Other':'Other'},
-  leaveTitle:'{t} leave',attempts:'({n} attempts left)',langBtn:'العربية'},
+  leaveTitle:'{t} leave',attempts:'({n} attempts left)',langBtn:'العربية',
+  noProject:'No project',inNoProject:'Check in without a project',orSite:'Or choose a site',
+  installTitle:'Install the app first',installText:'For security, Petrokima must be installed on your home screen before you sign in.',
+  iosSteps:'1. Tap the Share button ⬆︎ at the bottom of Safari\n2. Choose “Add to Home Screen”\n3. Open Petrokima from your home screen and sign in',
+  otherDevice:'Your employee code is registered to another phone. If you changed your phone, ask HR to reset your registered phone.',
+  deviceTaken:'This phone is already registered to another employee. Each phone can be used by one employee only.',
+  deviceMismatch:'This phone is not the phone registered to your employee code. Contact HR.',
+  badDevice:'This phone could not be identified. Close the app and open it again.',
+  phoneReg:'Registered phone',thisPhone:'This phone is registered to you',back:'Back'},
  ar:{appName:'بتروكيما',loginSub:'الحضور وطلبات الموارد البشرية',empCode:'كود الموظف',password:'كلمة المرور',signIn:'تسجيل الدخول',forgot:'نسيت كلمة المرور؟ اطلب من الموارد البشرية إعادة تعيينها.',
   wrongLogin:'كود الموظف أو كلمة المرور غير صحيحة.',fillLogin:'أدخل كود الموظف وكلمة المرور.',
   firstTitle:'مرحباً بك',firstSub:'هذا أول تسجيل دخول لك. أكّد هويتك واختر كلمة مرور خاصة بك.',nid4:'آخر ٤ أرقام من الرقم القومي',
@@ -277,7 +292,15 @@ const T = {
   lt:{Annual:'سنوية',Casual:'عارضة',Sick:'مرضية',Unpaid:'بدون أجر','Other paid':'أخرى مدفوعة'},
   pt:{'Late arrival':'تأخير صباحي','Early leave':'انصراف مبكر'},
   ht:{'HR letter':'خطاب من الموارد البشرية','Salary certificate':'شهادة راتب','Experience certificate':'شهادة خبرة','Update my personal data':'تحديث بياناتي الشخصية','Payslip copy':'نسخة قسيمة راتب','Loan request':'طلب سلفة','Other':'أخرى'},
-  leaveTitle:'إجازة {t}',attempts:'(متبقي {n} محاولات)',langBtn:'English'}
+  leaveTitle:'إجازة {t}',attempts:'(متبقي {n} محاولات)',langBtn:'English',
+  noProject:'بدون مشروع',inNoProject:'تسجيل حضور بدون مشروع',orSite:'أو اختر موقعاً',
+  installTitle:'ثبّت التطبيق أولاً',installText:'لأسباب أمنية، يجب تثبيت تطبيق بتروكيما على الشاشة الرئيسية قبل تسجيل الدخول.',
+  iosSteps:'١. اضغط زر المشاركة ⬆︎ أسفل متصفح سفاري\n٢. اختر «إضافة إلى الشاشة الرئيسية»\n٣. افتح بتروكيما من الشاشة الرئيسية وسجّل الدخول',
+  otherDevice:'كود الموظف الخاص بك مسجّل على هاتف آخر. إذا غيّرت هاتفك، اطلب من الموارد البشرية إعادة تعيين الهاتف المسجّل.',
+  deviceTaken:'هذا الهاتف مسجّل بالفعل لموظف آخر. كل هاتف يُستخدم لموظف واحد فقط.',
+  deviceMismatch:'هذا الهاتف ليس الهاتف المسجّل لكود الموظف الخاص بك. تواصل مع الموارد البشرية.',
+  badDevice:'تعذّر التعرّف على هذا الهاتف. أغلق التطبيق وافتحه مرة أخرى.',
+  phoneReg:'الهاتف المسجّل',thisPhone:'هذا الهاتف مسجّل باسمك',back:'رجوع'}
 };
 let LANG = localStorage.getItem('pk_lang') || 'ar';   // Arabic by default; one tap switches to English
 const t = (k, vars) => { let s = (T[LANG][k] ?? T.en[k] ?? k); if (vars) Object.entries(vars).forEach(([a,b]) => s = s.replace('{'+a+'}', b)); return s; };
@@ -286,6 +309,7 @@ function applyLang(){
   document.documentElement.lang = LANG; document.documentElement.dir = LANG==='ar' ? 'rtl' : 'ltr';
   document.querySelectorAll('[data-t]').forEach(el => el.textContent = t(el.dataset.t));
   document.querySelectorAll('[data-lang]').forEach(el => el.textContent = t('langBtn'));
+  if ($('ios-steps')) $('ios-steps').textContent = t('iosSteps');
   if (APP.ready) renderAll();
 }
 
@@ -314,6 +338,7 @@ function friendly(msg){
   msg = String(msg||'');
   if (/ALREADY_IN/.test(msg)) return t('alreadyIn');
   if (/NOT_IN/.test(msg)) return t('notInErr');
+  if (/DEVICE/.test(msg)) return t('deviceMismatch');
   if (/approved and locked/i.test(msg)) return t('lockedPeriod');
   if (/Failed to fetch|NetworkError|network/i.test(msg)) return t('offline');
   return msg.replace(/^[A-Z_]+:\s*/, '');
@@ -336,6 +361,24 @@ function leaveDaysIn(l,a,b){ const s=l.date_from>a?l.date_from:a, e=l.date_to<b?
 // ═════════════════════════════════════════════════════════
 const APP = { ready:false, me:null, emp:null, status:null, statusAt:0, leaves:[], perms:[], reqs:[], slips:[], att:[], manager:null, view:'home' };
 let sb = null, tempPass = '';
+// A random identity created once on this phone and kept in the app's storage
+function deviceId(){
+  let id = localStorage.getItem('pk_device');
+  if (!id || id.length < 16){
+    id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'd-' + Date.now().toString(36) + '-' + Array.from({length:4},()=>Math.random().toString(36).slice(2,10)).join('');
+    localStorage.setItem('pk_device', id);
+  }
+  return id;
+}
+function deviceLabel(){
+  const u = navigator.userAgent || '';
+  if (/iPhone/.test(u)) return 'iPhone'; if (/iPad/.test(u)) return 'iPad';
+  const m = u.match(/Android [\d.]+;\s*([^;)]+)/); if (m) return 'Android · ' + m[1].trim();
+  if (/Android/.test(u)) return 'Android'; if (/Windows/.test(u)) return 'Windows PC'; if (/Macintosh/.test(u)) return 'Mac';
+  return 'Browser';
+}
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isStandalone = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
 function loginName(v){ v=String(v||'').trim(); return v.includes('@') ? v.toLowerCase() : v.toLowerCase().replace(/[^a-z0-9._-]/g,'') + '@' + LOGIN_DOMAIN; }
 function errBox(id, msg){ const e=$(id); if(!msg){ e.style.display='none'; return; } e.textContent=msg; e.style.display='block'; }
 async function doLogin(){
@@ -357,6 +400,12 @@ async function afterLogin(user){
   if (!me.emp_id) return message(t('notLinked'));
   APP.me = me;
   if (me.must_change_password){ ['fl-nid','fl-p1','fl-p2'].forEach(i=>$(i).value=''); errBox('fl-err'); show('scr-first'); return; }
+  const { data: reg, error: regErr } = await sb.rpc('register_device', { p_device: deviceId(), p_label: deviceLabel() });
+  if (regErr || !['ok','registered'].includes(reg)){
+    const txt = reg==='other_device' ? t('otherDevice') : reg==='device_taken' ? t('deviceTaken') : reg==='bad_device' ? t('badDevice') : friendly(regErr ? regErr.message : reg);
+    try { await sb.auth.signOut(); } catch(e){}
+    return message(txt);
+  }
   show('scr-main'); await loadAll(); APP.ready = true; renderAll();
 }
 async function firstLogin(){
@@ -419,7 +468,7 @@ function renderHome(){
   if (o){
     const notToday = o.date !== st.date;
     $('clk-state').innerHTML = `<div class="state ${notToday?'warn':'on'}">${notToday ? esc(t('openFrom',{ d:niceDate(o.date), t:o.in })) + '<br>' : ''}
-      ${esc(t('checkedIn'))} <b>${esc(o.name || o.code)}</b><br>${esc(t('since'))} <b class="num">${esc(o.in)}</b> · ${esc(t('hSince'))} <b class="num" id="clk-dur"></b></div>`;
+      ${esc(t('checkedIn'))} <b>${esc(o.code ? (o.name || o.code) : t('noProject'))}</b><br>${esc(t('since'))} <b class="num">${esc(o.in)}</b> · ${esc(t('hSince'))} <b class="num" id="clk-dur"></b></div>`;
     $('clk-btns').innerHTML = `<div class="row"><button class="btn ghost big" data-act="switch">🔁 ${esc(t('switchSite'))}</button><button class="btn red big" data-act="out">⏹ ${esc(t('checkOut'))}</button></div>`;
   } else {
     $('clk-state').innerHTML = `<div class="state off">${esc(t('notIn'))}</div>`;
@@ -427,7 +476,7 @@ function renderHome(){
   }
   const today = st.today || [];
   const tot = today.reduce((s,x)=>s+num(x.hours),0);
-  $('today-list').innerHTML = today.length ? today.map(x => `<div class="it"><div class="grow"><div class="t1">${esc(x.name || x.code)}</div><div class="t2">${esc(x.code)}</div></div>
+  $('today-list').innerHTML = today.length ? today.map(x => `<div class="it"><div class="grow"><div class="t1">${esc(x.code ? (x.name || x.code) : t('noProject'))}</div><div class="t2">${esc(x.code || '—')}</div></div>
       <div class="num" style="font-size:14px">${esc(x.in)} – ${x.out ? esc(x.out) : `<span class="chip c-green">${esc(t('openLine'))}</span>`}</div>
       <div class="num" style="min-width:52px;text-align:end">${x.out ? fmtH(x.hours) : ''}</div></div>`).join('')
       + `<div class="it"><div class="grow t1">${esc(t('totalToday'))}</div><div class="num">${fmtH(tot)}</div></div>`
@@ -436,7 +485,7 @@ function renderHome(){
   $('month-title').textContent = `${t('thisCycle')} — ${periodLabel(cyc)}`;
   const days = APP.att.filter(a => a.date !== st.date);
   $('month-list').innerHTML = days.length ? days.map(a => `<div class="it"><div class="grow"><div class="t1">${esc(niceDate(a.date))}</div>
-      <div class="t2">${(a.projects||[]).map(x=>esc(x.code)).join(' · ') || esc(tm('st',a.status)||a.status)}</div></div>
+      <div class="t2">${(a.projects||[]).map(x=>esc(x.code || t('noProject'))).join(' · ') || esc(tm('st',a.status)||a.status)}</div></div>
       <div class="num" style="font-size:13.5px">${esc(a.check_in||'')}${a.check_out?' – '+esc(a.check_out):''}</div>
       <div class="num" style="min-width:52px;text-align:end">${fmtH(a.total_hours)}</div></div>`).join('')
     : `<div class="empty">${esc(t('noMonth'))}</div>`;
@@ -447,7 +496,10 @@ let pickSel = null, searchT;
 function openSitePicker(mode){
   pickSel = null;
   const recent = (APP.status && APP.status.recent) || [], openCode = APP.status && APP.status.open && APP.status.open.code;
+  const noProj = APP.status && APP.status.no_project && openCode !== '';
+  const openIsNone = APP.status && APP.status.open && APP.status.open.code === '';
   sheet(`<h2>${esc(t('whereWork'))}</h2>
+    ${APP.status && APP.status.no_project && !openIsNone ? `<button class="btn green big" id="noproj-go" style="margin-bottom:14px">▶ ${esc(t('inNoProject'))}</button><div class="sec" style="font-size:13px;color:var(--muted)">${esc(t('orSite'))}</div>` : ''}
     ${recent.length ? `<div class="sec" style="font-size:13px;color:var(--muted)">${esc(t('recent'))}</div>${recent.filter(r=>r.code!==openCode).map(siteBtn).join('')}` : ''}
     <div class="field" style="margin-top:12px"><input id="site-q" placeholder="${esc(t('searchSite'))}" autocomplete="off"></div>
     <div id="site-res"><div class="hint">${esc(t('typeMore'))}</div></div>
@@ -480,7 +532,7 @@ async function clock(type, code, btn){
   const wasOpen = !!(APP.status && APP.status.open);
   if (btn){ btn.disabled=true; btn.innerHTML = `<div class="spin"></div> ${esc(t('gettingLoc'))}`; }
   const g = await getLocation();
-  const rec = { emp_id: APP.me.emp_id, event_type:type, project_code: code || null, lat: g && g.lat, lng: g && g.lng, accuracy: g && g.accuracy,
+  const rec = { emp_id: APP.me.emp_id, event_type:type, project_code: code || null, device_id: deviceId(), lat: g && g.lat, lng: g && g.lng, accuracy: g && g.accuracy,
                 device: (navigator.userAgent || '').slice(0, 150) };
   const { error } = await sb.from('clock_events').insert(rec);
   if (btn) btn.disabled=false;
@@ -491,7 +543,7 @@ async function clock(type, code, btn){
 }
 function confirmOut(){
   const o = APP.status && APP.status.open;
-  sheet(`<h2>${esc(t('confirmOut'))}</h2><div class="hint">${esc(t('checkedIn'))} <b>${esc(o ? (o.name||o.code) : '')}</b> ${esc(t('since'))} <b class="num">${esc(o ? o.in : '')}</b></div>
+  sheet(`<h2>${esc(t('confirmOut'))}</h2><div class="hint">${esc(t('checkedIn'))} <b>${esc(o ? (o.code ? (o.name||o.code) : t('noProject')) : '')}</b> ${esc(t('since'))} <b class="num">${esc(o ? o.in : '')}</b></div>
     <div class="row"><button class="btn ghost" data-act="close">${esc(t('cancel'))}</button><button class="btn red" id="out-go">⏹ ${esc(t('checkOut'))}</button></div>`);
 }
 
@@ -622,7 +674,8 @@ function renderProfile(){
   $('prof-card').innerHTML = `<div class="sec" style="font-size:17px">${esc(LANG==='ar' ? (e.name_ar||e.name_en) : (e.name_en||e.name_ar))}</div>
     ${kv('code', e.id, true)}${kv('job', e.job_name)}${kv('dept', e.department)}${kv('unit', e.unit)}${kv('manager', m ? (LANG==='ar' ? (m.name_ar||m.name_en) : (m.name_en||m.name_ar)) : '')}
     ${kv('entity', e.entity)}${kv('hired', e.employment_date, true)}${kv('mobile', e.mobile, true)}${kv('email', e.email, true)}
-    ${kv('nidL', e.national_id ? '•••• ' + String(e.national_id).slice(-4) : '', true)}`;
+    ${kv('nidL', e.national_id ? '•••• ' + String(e.national_id).slice(-4) : '', true)}
+    ${APP.status && APP.status.device ? `<div class="kv"><span class="k">${esc(t('phoneReg'))}</span><span class="v">📱 ${esc(APP.status.device.label || '')} · ${esc(t('thisPhone'))}</span></div>` : ''}`;
   const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const ic = $('install-card');
@@ -664,6 +717,7 @@ document.addEventListener('click', async ev => {
   const sl = x.closest('[data-slip]'); if (sl) return slipSheet(sl.dataset.slip);
   const cx = x.closest('[data-cancel]'); if (cx) return askCancel(cx.dataset.cancel);
   if (x.id === 'site-go' && pickSel) return clock('in', pickSel.code, x);
+  if (x.id === 'noproj-go') return clock('in', null, x);
   if (x.id === 'out-go') return clock('out', null, x);
   const a = x.closest('[data-act]'); if (!a) return;
   const act = a.dataset.act;
@@ -692,6 +746,7 @@ setInterval(() => { if (APP.ready) tick(); }, 15000);
   if (!window.supabase || !SUPABASE_KEY || SUPABASE_KEY.startsWith('PASTE')) return message(t('configMissing'));
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   $('li-code').value = localStorage.getItem('pk_code') || '';
+  if (isIOS() && !isStandalone()) { $('ios-steps').textContent = t('iosSteps'); show('scr-install'); return; }
   try {
     const { data } = await sb.auth.getSession();
     if (data && data.session) await afterLogin(data.session.user); else show('scr-login');

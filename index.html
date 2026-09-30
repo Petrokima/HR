@@ -261,7 +261,7 @@ const T = {
   badDevice:'This phone could not be identified. Close the app and open it again.',
   phoneReg:'Registered phone',thisPhone:'This phone is registered to you',back:'Back',
   locTitle:'Location is required',locDenied:'Check-in needs your location, and this phone is not sharing it with Petrokima.',
-  locIos:'iPhone: Settings → Privacy & Security → Location Services → turn it ON → scroll to “Safari Websites” → choose “While Using the App”. Then open Petrokima again and tap Allow.',
+  locIos:'iPhone — check both:\n1. Settings → Privacy & Security → Location Services → ON → “Safari Websites” → “While Using the App”.\n2. Settings → Apps → Safari → Settings for Websites → Location → set petrokima.github.io (and “Other Websites”) to Allow or Ask.\nThen close Petrokima completely (swipe it away) and open it again. Still blocked? Ask HR — the app may need to be added to the home screen again.',
   locAndroid:'Android: open the phone Settings → Location → turn it ON. Then in Chrome tap ⋮ → Settings → Site settings → Location → allow this site (or long-press the Petrokima icon → App info → Permissions → Location → Allow).',
   locTimeout:'Your location could not be found. Move near a window or outside, wait a few seconds and try again.',tryAgain:'Try again',
   queued:'Saved on your phone ✓ — it will be sent automatically when you are back online',
@@ -317,7 +317,7 @@ const T = {
   badDevice:'تعذّر التعرّف على هذا الهاتف. أغلق التطبيق وافتحه مرة أخرى.',
   phoneReg:'الهاتف المسجّل',thisPhone:'هذا الهاتف مسجّل باسمك',back:'رجوع',
   locTitle:'تحديد الموقع مطلوب',locDenied:'تسجيل الحضور يتطلب موقعك، وهذا الهاتف لا يشارك موقعه مع تطبيق بتروكيما.',
-  locIos:'آيفون: الإعدادات ← الخصوصية والأمان ← خدمات الموقع ← شغّلها ← انزل إلى «مواقع سفاري» ← اختر «أثناء استخدام التطبيق». ثم افتح بتروكيما مرة أخرى واضغط «سماح».',
+  locIos:'آيفون — راجع الإعدادين:\n١. الإعدادات ← الخصوصية والأمان ← خدمات الموقع ← تشغيل ← «مواقع سفاري» ← «أثناء استخدام التطبيق».\n٢. الإعدادات ← التطبيقات ← سفاري ← إعدادات المواقع ← الموقع ← اجعل petrokima.github.io (و«مواقع أخرى») على «السماح» أو «السؤال».\nثم أغلق بتروكيما تماماً (اسحبه لأعلى) وافتحه مرة أخرى. ما زال محظوراً؟ تواصل مع الموارد البشرية — قد يلزم إضافة التطبيق إلى الشاشة الرئيسية من جديد.',
   locAndroid:'أندرويد: افتح إعدادات الهاتف ← الموقع ← شغّله. ثم في كروم اضغط ⋮ ← الإعدادات ← إعدادات المواقع ← الموقع ← اسمح لهذا الموقع (أو اضغط مطولاً على أيقونة بتروكيما ← معلومات التطبيق ← الأذونات ← الموقع ← سماح).',
   locTimeout:'تعذّر تحديد موقعك. اقترب من نافذة أو اخرج إلى مكان مفتوح، انتظر قليلاً ثم حاول مرة أخرى.',tryAgain:'حاول مرة أخرى',
   queued:'تم الحفظ على هاتفك ✓ — سيتم الإرسال تلقائياً عند عودة الإنترنت',
@@ -601,7 +601,7 @@ function locationHelp(code, retry){
   const denied = code === 1;
   sheet(`<h2>📍 ${esc(t('locTitle'))}</h2>
     <div class="hint" style="color:var(--text)">${esc(denied ? t('locDenied') : t('locTimeout'))}</div>
-    ${denied ? `<div class="hint">${esc(isIOS() ? t('locIos') : t('locAndroid'))}</div>` : ''}
+    ${denied ? `<div class="hint" style="white-space:pre-line">${esc(isIOS() ? t('locIos') : t('locAndroid'))}</div>` : ''}
     <button class="btn" id="loc-retry">${esc(t('tryAgain'))}</button>`);
   $('loc-retry').onclick = retry;
 }

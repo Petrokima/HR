@@ -180,6 +180,8 @@ main{padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px))}
       </div>
       <div class="card"><div class="sec" data-t="myRequests"></div><div class="list" id="req-list"></div></div>
     </div>
+    <!-- TEAM APPROVALS (managers) -->
+    <div class="view" id="v-team"><div class="card"><div class="sec" data-t="teamTitle"></div><div class="hint" data-t="teamNote"></div><div class="list" id="team-list"></div></div></div>
     <!-- PAYSLIPS -->
     <div class="view" id="v-pay"><div class="card"><div class="sec" data-t="payslips"></div><div class="list" id="pay-list"></div></div></div>
     <!-- PROFILE -->
@@ -195,6 +197,7 @@ main{padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px))}
   <nav class="tabbar">
     <button class="tab on" data-view="home"><span class="ic">⏱</span><span data-t="home"></span></button>
     <button class="tab" data-view="req"><span class="ic">📋</span><span data-t="requests"></span></button>
+    <button class="tab" data-view="team" id="tab-team" style="display:none;position:relative"><span class="ic">✅</span><span data-t="approvals"></span><span id="team-badge" style="display:none;position:absolute;top:2px;inset-inline-end:14px;background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 6px"></span></button>
     <button class="tab" data-view="pay"><span class="ic">💰</span><span data-t="payslips"></span></button>
     <button class="tab" data-view="prof"><span class="ic">👤</span><span data-t="profile"></span></button>
   </nav>
@@ -271,6 +274,9 @@ const T = {
   tooOld:'More than 72 hours old — HR must record it.',wrongOrder:'Earlier than a check-in already recorded — HR must review it.',
   offlineMode:'Offline — showing the last saved information',offlineSites:'No internet: choose one of your recent sites',
   noCache:'No internet connection. Connect once to sign in.',
+  approvals:'Approvals',teamTitle:'Project Allowance for your team',teamNote:'Calculated from their attendance at projects. Nothing is paid until you approve and HR then approves.',
+  approve:'Approve',reject:'Reject',rejectWhy:'Reason for rejecting',approvedMsg:'Approved — sent to HR ✓',rejectedMsg:'Rejected',noTeam:'Nothing to approve',
+  aaWait:'Waiting for you',aaHR:'Approved by you — waiting for HR',aaOk:'Approved — will be paid',aaNo:'Rejected',day:'day',daysW:'days',at:'at',
   refresh:'Refresh',refreshed:'Up to date ✓',updated:'Updated {t}',pull:'Pull down to refresh',release:'Release to refresh',refreshing:'Refreshing…'},
  ar:{appName:'بتروكيما',loginSub:'الحضور وطلبات الموارد البشرية',empCode:'كود الموظف',password:'كلمة المرور',signIn:'تسجيل الدخول',forgot:'نسيت كلمة المرور؟ اطلب من الموارد البشرية إعادة تعيينها.',
   wrongLogin:'كود الموظف أو كلمة المرور غير صحيحة.',fillLogin:'أدخل كود الموظف وكلمة المرور.',
@@ -327,6 +333,9 @@ const T = {
   tooOld:'مضى عليه أكثر من ٧٢ ساعة — يجب أن تسجّله الموارد البشرية.',wrongOrder:'أقدم من تسجيل موجود بالفعل — يجب أن تراجعه الموارد البشرية.',
   offlineMode:'بدون إنترنت — يتم عرض آخر بيانات محفوظة',offlineSites:'لا يوجد إنترنت: اختر أحد مواقعك الأخيرة',
   noCache:'لا يوجد اتصال بالإنترنت. اتصل مرة واحدة لتسجيل الدخول.',
+  approvals:'الموافقات',teamTitle:'بدل المشروع لفريقك',teamNote:'محسوب من حضورهم في المشروعات. لا يُصرف أي مبلغ إلا بعد موافقتك ثم موافقة الموارد البشرية.',
+  approve:'موافقة',reject:'رفض',rejectWhy:'سبب الرفض',approvedMsg:'تمت الموافقة — أُرسل إلى الموارد البشرية ✓',rejectedMsg:'تم الرفض',noTeam:'لا توجد طلبات للموافقة',
+  aaWait:'في انتظار موافقتك',aaHR:'وافقت عليه — في انتظار الموارد البشرية',aaOk:'معتمد — سيُصرف',aaNo:'مرفوض',day:'يوم',daysW:'أيام',at:'في',
   refresh:'تحديث',refreshed:'تم التحديث ✓',updated:'آخر تحديث {t}',pull:'اسحب للأسفل للتحديث',release:'اترك للتحديث',refreshing:'جارٍ التحديث…'}
 };
 let LANG = localStorage.getItem('pk_lang') || 'ar';   // Arabic by default; one tap switches to English
@@ -396,11 +405,11 @@ const store = { get:(k,d)=>{ try { const v=localStorage.getItem(k); return v?JSO
 const queue = () => store.get('pk_queue', []);
 const uid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'c-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
 const isNetErr = e => !navigator.onLine || /Failed to fetch|NetworkError|network|Load failed|fetch/i.test(String((e && e.message) || e || ''));
-function saveCache(){ store.set('pk_cache', { uid:APP.me && APP.me.id, updatedAt:APP.updatedAt, me:APP.me, emp:APP.emp, status:APP.status, statusAt:APP.statusAt, S, hol:[...HOL], leaves:APP.leaves, perms:APP.perms, reqs:APP.reqs, slips:APP.slips, att:APP.att, manager:APP.manager }); }
+function saveCache(){ store.set('pk_cache', { uid:APP.me && APP.me.id, updatedAt:APP.updatedAt, team:APP.team, me:APP.me, emp:APP.emp, status:APP.status, statusAt:APP.statusAt, S, hol:[...HOL], leaves:APP.leaves, perms:APP.perms, reqs:APP.reqs, slips:APP.slips, att:APP.att, manager:APP.manager }); }
 function useCache(uid){
   const c = store.get('pk_cache', null); if (!c || (uid && c.uid !== uid)) return false;
   APP.me=c.me; APP.emp=c.emp; APP.status=c.status; APP.statusAt=c.statusAt||Date.now(); S={...S,...(c.S||{})}; HOL=new Set(c.hol||[]);
-  APP.leaves=c.leaves||[]; APP.perms=c.perms||[]; APP.reqs=c.reqs||[]; APP.slips=c.slips||[]; APP.att=c.att||[]; APP.manager=c.manager; APP.offline=true; APP.updatedAt=c.updatedAt;
+  APP.leaves=c.leaves||[]; APP.perms=c.perms||[]; APP.reqs=c.reqs||[]; APP.slips=c.slips||[]; APP.att=c.att||[]; APP.manager=c.manager; APP.offline=true; APP.updatedAt=c.updatedAt; APP.team=c.team||[];
   return true;
 }
 // Server time minus phone time, measured each time we are online
@@ -485,7 +494,7 @@ async function signOut(){ try { await sb.auth.signOut(); } catch(e){} APP.ready=
 async function loadAll(){
   const id = APP.me.emp_id;
   const all = async (q) => { const r = await q; return r.data || []; };
-  const [set, hol, emp, lv, pm, rq, sl, mg] = await Promise.all([
+  const [set, hol, emp, lv, pm, rq, sl, mg, tm] = await Promise.all([
     all(sb.from('settings').select('*').eq('key','payroll')),
     all(sb.from('public_holidays').select('date')),
     all(sb.from('employees').select('*').eq('id', id)),
@@ -493,10 +502,11 @@ async function loadAll(){
     all(sb.from('attendance_permissions').select('*').eq('emp_id', id).order('date', { ascending:false })),
     all(sb.from('hr_requests').select('*').eq('emp_id', id).order('created_at', { ascending:false })),
     all(sb.from('payroll_run_lines').select('*').eq('emp_id', id).order('period', { ascending:false })),
-    sb.rpc('my_manager').then(r => r.data || [], () => []) ]);
+    sb.rpc('my_manager').then(r => r.data || [], () => []),
+    all(sb.from('allowance_approvals').select('*').eq('manager_id', id).order('submitted_at', { ascending:false })) ]);
   if (set[0] && set[0].value) S = { ...S, ...set[0].value };
   HOL = new Set(hol.map(h => h.date));
-  APP.emp = emp[0] || null; APP.leaves = lv; APP.perms = pm; APP.reqs = rq; APP.slips = sl; APP.manager = mg[0] || null;
+  APP.emp = emp[0] || null; APP.leaves = lv; APP.perms = pm; APP.reqs = rq; APP.slips = sl; APP.manager = mg[0] || null; APP.team = tm || [];
   await loadStatus();
 }
 async function loadStatus(){
@@ -840,10 +850,32 @@ function passSheet(){
     closeSheet(); toast(t('passChanged'));
   };
 }
+function renderTeam(){
+  const team = (APP.team||[]).slice().sort((a,b) => (a.status==='Pending manager'?0:1) - (b.status==='Pending manager'?0:1));
+  const waiting = team.filter(a => a.status==='Pending manager').length;
+  $('tab-team').style.display = team.length ? '' : 'none';
+  $('team-badge').style.display = waiting ? '' : 'none'; $('team-badge').textContent = waiting;
+  const st = { 'Pending manager':['c-orange','aaWait'], 'Pending HR':['c-blue','aaHR'], 'Approved':['c-green','aaOk'], 'Rejected':['c-red','aaNo'] };
+  $('team-list').innerHTML = team.map(a => { const c = st[a.status] || ['c-grey','aaNo'];
+    return `<div class="it" style="align-items:flex-start"><div class="grow"><div class="t1">${esc(a.emp_name || a.emp_id)} <span class="muted" style="font-size:12px">${esc(a.emp_id)}</span></div>
+      <div class="t2">${esc(periodLabel(a.period))}${a.job_name ? ' · ' + esc(a.job_name) : ''}</div>
+      <div class="t2">${(a.details||[]).map(x => `${x.days} ${x.days===1?t('day'):t('daysW')} × <span class="num">${fmt(x.rate)}</span> ${t('at')} ${esc(x.project_name || x.project)}`).join('<br>')}</div>
+      <div style="margin-top:6px"><span class="chip ${c[0]}">${esc(t(c[1]))}</span></div>
+      ${a.status==='Pending manager' ? `<div class="row" style="margin-top:10px"><button class="btn green small" style="flex:1" data-team-ok="${a.id}">✓ ${esc(t('approve'))}</button><button class="btn ghost small" style="flex:1" data-team-no="${a.id}">✕ ${esc(t('reject'))}</button></div>` : ''}</div>
+      <div class="num" style="font-size:17px">${fmt(a.amount)}</div></div>`; }).join('') || `<div class="empty">${esc(t('noTeam'))}</div>`;
+}
+async function teamDecide(id, approve, note){
+  if (!navigator.onLine) return toast(t('offline'), true);
+  const { error } = await sb.rpc('manager_decide_allowance', { p_id:id, p_approve:approve, p_note: note || null });
+  if (error) return toast(friendly(error.message), true);
+  closeSheet(); toast(approve ? t('approvedMsg') : t('rejectedMsg'));
+  const r = await sb.from('allowance_approvals').select('*').eq('manager_id', APP.me.emp_id).order('submitted_at', { ascending:false });
+  APP.team = r.data || APP.team; saveCache(); renderTeam();
+}
 function renderAll(){ if(!APP.ready) return; const e=APP.emp||{};
   $('me-name').textContent = LANG==='ar' ? (e.name_ar||e.name_en||APP.me.full_name||'') : (e.name_en||e.name_ar||APP.me.full_name||'');
   $('me-meta').textContent = `${APP.me.emp_id}${e.job_name?' · '+e.job_name:''}`;
-  renderHome(); renderRequests(); renderPayslips(); renderProfile(); }
+  renderHome(); renderRequests(); renderTeam(); renderPayslips(); renderProfile(); }
 function go(view){ APP.view=view; document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+view)); document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on', b.dataset.view===view)); window.scrollTo(0,0); }
 
 // ═════════════════════════════════════════════════════════
@@ -859,6 +891,11 @@ document.addEventListener('click', async ev => {
   const s = x.closest('.site'); if (s) return selectSite(s);
   const sl = x.closest('[data-slip]'); if (sl) return slipSheet(sl.dataset.slip);
   const cx = x.closest('[data-cancel]'); if (cx) return askCancel(cx.dataset.cancel);
+  const tok = x.closest('[data-team-ok]'); if (tok) { tok.disabled = true; return teamDecide(tok.dataset.teamOk, true); }
+  const tno = x.closest('[data-team-no]'); if (tno) { const id = tno.dataset.teamNo;
+    sheet(`<h2>✕ ${esc(t('reject'))}</h2><div class="field"><label>${esc(t('rejectWhy'))}</label><textarea id="tno-note"></textarea></div>
+      <div class="row"><button class="btn ghost" data-act="close">${esc(t('cancel'))}</button><button class="btn red" id="tno-go">${esc(t('reject'))}</button></div>`);
+    $('tno-go').onclick = () => teamDecide(id, false, $('tno-note').value.trim()); return; }
   if (x.id === 'site-go' && pickSel) return clock('in', pickSel.code, x);
   if (x.id === 'disc-go') { store.set('pk_queue', queue().filter(ev => ev.client_id !== x.dataset.id)); closeSheet(); try { await loadStatus(); } catch(e){} return renderHome(); }
   const dsc = x.closest('[data-discard]'); if (dsc) return discardSaved(dsc.dataset.discard);

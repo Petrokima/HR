@@ -101,6 +101,7 @@ main{padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px))}
 #offline{display:none;background:var(--warn);color:#fff;text-align:center;font-size:13px;font-weight:700;padding:6px}
 .spin{width:22px;height:22px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+.spinning{animation:sp .8s linear infinite}
 .loading{display:flex;justify-content:center;padding:40px}
 .loading .spin{border-color:var(--line);border-top-color:var(--brand)}
 </style>
@@ -151,15 +152,17 @@ main{padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px))}
 <section class="screen" id="scr-main">
   <div class="top">
     <div class="who"><div class="name" id="me-name"></div><div class="meta" id="me-meta"></div></div>
-    <button class="iconbtn" data-act="refresh" aria-label="refresh">⟳</button>
+    <button class="iconbtn" data-act="refresh" id="btn-refresh" style="display:flex;align-items:center;gap:5px;background:#eef3ff;color:var(--brand)"><span id="rf-ic" style="display:inline-block;font-size:16px">⟳</span><span data-t="refresh"></span></button>
     <button class="iconbtn" data-lang>English</button>
   </div>
+  <div id="ptr" style="height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700;color:var(--brand);transition:height .15s"><span id="ptr-ic">⟳</span><span id="ptr-tx"></span></div>
   <main>
     <!-- HOME -->
     <div class="view on" id="v-home">
       <div class="card clock">
         <div class="time" id="clk-time">--:--</div>
         <div class="date" id="clk-date"></div>
+        <div id="clk-upd" style="font-size:12px;color:var(--muted);margin:-8px 0 10px"></div>
         <div id="clk-state"></div>
         <div id="clk-btns"></div>
         <div class="muted" style="font-size:12px;margin-top:12px" data-t="locNote"></div>
@@ -220,7 +223,7 @@ const T = {
   need4:'Enter the last 4 digits of your national ID.',short:'The password must be at least 8 characters.',nomatch:'The two passwords do not match.',sameTemp:'Choose a password different from the temporary one.',
   nidWrong:'The national ID digits do not match HR records.',locked:'Your account is locked. Ask HR to reset it.',passSet:'Password saved — welcome!',
   noRole:'This account has no access yet. Please contact HR.',notLinked:'This account is not linked to an employee record.',inactive:'This account is locked or deactivated. Please contact HR.',
-  offline:'No internet connection — check in and requests need a connection',
+  offline:'No internet — check-ins are saved on your phone and sent later; requests need a connection',
   home:'Attendance',requests:'Requests',payslips:'Payslips',profile:'Profile',
   notIn:'You are not checked in.',checkedIn:'Checked in at',since:'since',hSince:'for',checkIn:'Check in',checkOut:'Check out',switchSite:'Switch site',
   openFrom:'You checked in on {d} at {t} and have not checked out yet.',
@@ -256,7 +259,19 @@ const T = {
   deviceTaken:'This phone is already registered to another employee. Each phone can be used by one employee only.',
   deviceMismatch:'This phone is not the phone registered to your employee code. Contact HR.',
   badDevice:'This phone could not be identified. Close the app and open it again.',
-  phoneReg:'Registered phone',thisPhone:'This phone is registered to you',back:'Back'},
+  phoneReg:'Registered phone',thisPhone:'This phone is registered to you',back:'Back',
+  locTitle:'Location is required',locDenied:'Check-in needs your location, and this phone is not sharing it with Petrokima.',
+  locIos:'iPhone: Settings → Privacy & Security → Location Services → turn it ON → scroll to “Safari Websites” → choose “While Using the App”. Then open Petrokima again and tap Allow.',
+  locAndroid:'Android: open the phone Settings → Location → turn it ON. Then in Chrome tap ⋮ → Settings → Site settings → Location → allow this site (or long-press the Petrokima icon → App info → Permissions → Location → Allow).',
+  locTimeout:'Your location could not be found. Move near a window or outside, wait a few seconds and try again.',tryAgain:'Try again',
+  queued:'Saved on your phone ✓ — it will be sent automatically when you are back online',
+  waiting:'{n} check-in(s) saved on this phone, waiting for internet',waitingOne:'waiting to send',
+  sentNow:'{n} saved check-in(s) sent ✓',notRecorded:'A saved check-in could not be recorded — see the details on the home screen',
+  failedItem:'Not recorded',discard:'Discard',discardQ:'Discard this saved check-in? HR will need to record it manually.',sendNow:'Send now',
+  tooOld:'More than 72 hours old — HR must record it.',wrongOrder:'Earlier than a check-in already recorded — HR must review it.',
+  offlineMode:'Offline — showing the last saved information',offlineSites:'No internet: choose one of your recent sites',
+  noCache:'No internet connection. Connect once to sign in.',
+  refresh:'Refresh',refreshed:'Up to date ✓',updated:'Updated {t}',pull:'Pull down to refresh',release:'Release to refresh',refreshing:'Refreshing…'},
  ar:{appName:'بتروكيما',loginSub:'الحضور وطلبات الموارد البشرية',empCode:'كود الموظف',password:'كلمة المرور',signIn:'تسجيل الدخول',forgot:'نسيت كلمة المرور؟ اطلب من الموارد البشرية إعادة تعيينها.',
   wrongLogin:'كود الموظف أو كلمة المرور غير صحيحة.',fillLogin:'أدخل كود الموظف وكلمة المرور.',
   firstTitle:'مرحباً بك',firstSub:'هذا أول تسجيل دخول لك. أكّد هويتك واختر كلمة مرور خاصة بك.',nid4:'آخر ٤ أرقام من الرقم القومي',
@@ -264,7 +279,7 @@ const T = {
   need4:'أدخل آخر ٤ أرقام من الرقم القومي.',short:'يجب ألا تقل كلمة المرور عن ٨ أحرف.',nomatch:'كلمتا المرور غير متطابقتين.',sameTemp:'اختر كلمة مرور مختلفة عن كلمة المرور المؤقتة.',
   nidWrong:'أرقام الرقم القومي لا تطابق سجلات الموارد البشرية.',locked:'تم قفل حسابك. اطلب من الموارد البشرية إعادة تعيينه.',passSet:'تم حفظ كلمة المرور — مرحباً بك!',
   noRole:'هذا الحساب ليس له صلاحية بعد. يرجى التواصل مع الموارد البشرية.',notLinked:'هذا الحساب غير مرتبط بملف موظف.',inactive:'هذا الحساب مقفل أو موقوف. يرجى التواصل مع الموارد البشرية.',
-  offline:'لا يوجد اتصال بالإنترنت — تسجيل الحضور والطلبات تحتاج إلى اتصال',
+  offline:'لا يوجد إنترنت — يتم حفظ تسجيلات الحضور على هاتفك وإرسالها لاحقاً، والطلبات تحتاج إلى اتصال',
   home:'الحضور',requests:'الطلبات',payslips:'الرواتب',profile:'حسابي',
   notIn:'لم تسجّل حضورك بعد.',checkedIn:'مسجّل حضور في',since:'منذ',hSince:'مدة',checkIn:'تسجيل حضور',checkOut:'تسجيل انصراف',switchSite:'تغيير الموقع',
   openFrom:'سجّلت حضورك يوم {d} الساعة {t} ولم تسجّل الانصراف بعد.',
@@ -300,7 +315,19 @@ const T = {
   deviceTaken:'هذا الهاتف مسجّل بالفعل لموظف آخر. كل هاتف يُستخدم لموظف واحد فقط.',
   deviceMismatch:'هذا الهاتف ليس الهاتف المسجّل لكود الموظف الخاص بك. تواصل مع الموارد البشرية.',
   badDevice:'تعذّر التعرّف على هذا الهاتف. أغلق التطبيق وافتحه مرة أخرى.',
-  phoneReg:'الهاتف المسجّل',thisPhone:'هذا الهاتف مسجّل باسمك',back:'رجوع'}
+  phoneReg:'الهاتف المسجّل',thisPhone:'هذا الهاتف مسجّل باسمك',back:'رجوع',
+  locTitle:'تحديد الموقع مطلوب',locDenied:'تسجيل الحضور يتطلب موقعك، وهذا الهاتف لا يشارك موقعه مع تطبيق بتروكيما.',
+  locIos:'آيفون: الإعدادات ← الخصوصية والأمان ← خدمات الموقع ← شغّلها ← انزل إلى «مواقع سفاري» ← اختر «أثناء استخدام التطبيق». ثم افتح بتروكيما مرة أخرى واضغط «سماح».',
+  locAndroid:'أندرويد: افتح إعدادات الهاتف ← الموقع ← شغّله. ثم في كروم اضغط ⋮ ← الإعدادات ← إعدادات المواقع ← الموقع ← اسمح لهذا الموقع (أو اضغط مطولاً على أيقونة بتروكيما ← معلومات التطبيق ← الأذونات ← الموقع ← سماح).',
+  locTimeout:'تعذّر تحديد موقعك. اقترب من نافذة أو اخرج إلى مكان مفتوح، انتظر قليلاً ثم حاول مرة أخرى.',tryAgain:'حاول مرة أخرى',
+  queued:'تم الحفظ على هاتفك ✓ — سيتم الإرسال تلقائياً عند عودة الإنترنت',
+  waiting:'{n} تسجيل محفوظ على هذا الهاتف في انتظار الإنترنت',waitingOne:'في انتظار الإرسال',
+  sentNow:'تم إرسال {n} تسجيل محفوظ ✓',notRecorded:'تعذّر تسجيل أحد التسجيلات المحفوظة — راجع التفاصيل في الشاشة الرئيسية',
+  failedItem:'لم يُسجَّل',discard:'حذف',discardQ:'حذف هذا التسجيل المحفوظ؟ ستحتاج الموارد البشرية إلى تسجيله يدوياً.',sendNow:'إرسال الآن',
+  tooOld:'مضى عليه أكثر من ٧٢ ساعة — يجب أن تسجّله الموارد البشرية.',wrongOrder:'أقدم من تسجيل موجود بالفعل — يجب أن تراجعه الموارد البشرية.',
+  offlineMode:'بدون إنترنت — يتم عرض آخر بيانات محفوظة',offlineSites:'لا يوجد إنترنت: اختر أحد مواقعك الأخيرة',
+  noCache:'لا يوجد اتصال بالإنترنت. اتصل مرة واحدة لتسجيل الدخول.',
+  refresh:'تحديث',refreshed:'تم التحديث ✓',updated:'آخر تحديث {t}',pull:'اسحب للأسفل للتحديث',release:'اترك للتحديث',refreshing:'جارٍ التحديث…'}
 };
 let LANG = localStorage.getItem('pk_lang') || 'ar';   // Arabic by default; one tap switches to English
 const t = (k, vars) => { let s = (T[LANG][k] ?? T.en[k] ?? k); if (vars) Object.entries(vars).forEach(([a,b]) => s = s.replace('{'+a+'}', b)); return s; };
@@ -336,9 +363,12 @@ function closeSheet(){ $('sheet').classList.remove('on'); }
 function chip(s){ const c={Pending:'c-orange',Approved:'c-green',Completed:'c-green','In progress':'c-blue',Rejected:'c-red',Cancelled:'c-grey'}[s]||'c-grey'; return `<span class="chip ${c}">${esc(tm('st',s))}</span>`; }
 function friendly(msg){
   msg = String(msg||'');
+  if (/OFFLINE_TOO_OLD/.test(msg)) return t('tooOld');
+  if (/OFFLINE_ORDER/.test(msg)) return t('wrongOrder');
   if (/ALREADY_IN/.test(msg)) return t('alreadyIn');
   if (/NOT_IN/.test(msg)) return t('notInErr');
   if (/DEVICE/.test(msg)) return t('deviceMismatch');
+  if (/NO_LOCATION/.test(msg)) return t('locDenied');
   if (/approved and locked/i.test(msg)) return t('lockedPeriod');
   if (/Failed to fetch|NetworkError|network/i.test(msg)) return t('offline');
   return msg.replace(/^[A-Z_]+:\s*/, '');
@@ -361,6 +391,27 @@ function leaveDaysIn(l,a,b){ const s=l.date_from>a?l.date_from:a, e=l.date_to<b?
 // ═════════════════════════════════════════════════════════
 const APP = { ready:false, me:null, emp:null, status:null, statusAt:0, leaves:[], perms:[], reqs:[], slips:[], att:[], manager:null, view:'home' };
 let sb = null, tempPass = '';
+// ── things kept on the phone so the app works without internet ──
+const store = { get:(k,d)=>{ try { const v=localStorage.getItem(k); return v?JSON.parse(v):d; } catch(e){ return d; } }, set:(k,v)=>{ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} } };
+const queue = () => store.get('pk_queue', []);
+const uid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'c-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
+const isNetErr = e => !navigator.onLine || /Failed to fetch|NetworkError|network|Load failed|fetch/i.test(String((e && e.message) || e || ''));
+function saveCache(){ store.set('pk_cache', { uid:APP.me && APP.me.id, updatedAt:APP.updatedAt, me:APP.me, emp:APP.emp, status:APP.status, statusAt:APP.statusAt, S, hol:[...HOL], leaves:APP.leaves, perms:APP.perms, reqs:APP.reqs, slips:APP.slips, att:APP.att, manager:APP.manager }); }
+function useCache(uid){
+  const c = store.get('pk_cache', null); if (!c || (uid && c.uid !== uid)) return false;
+  APP.me=c.me; APP.emp=c.emp; APP.status=c.status; APP.statusAt=c.statusAt||Date.now(); S={...S,...(c.S||{})}; HOL=new Set(c.hol||[]);
+  APP.leaves=c.leaves||[]; APP.perms=c.perms||[]; APP.reqs=c.reqs||[]; APP.slips=c.slips||[]; APP.att=c.att||[]; APP.manager=c.manager; APP.offline=true; APP.updatedAt=c.updatedAt;
+  return true;
+}
+// Server time minus phone time, measured each time we are online
+function clockOffset(){ return store.get('pk_offset', { off:0 }).off || 0; }
+function serverNowMs(){ return Date.now() + clockOffset(); }
+function localParts(ms){
+  const tz = (APP.status && APP.status.tz) || 'Africa/Cairo';
+  const f = new Intl.DateTimeFormat('en-GB', { timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false }).formatToParts(new Date(ms));
+  const g = k => (f.find(p=>p.type===k)||{}).value;
+  return { date:`${g('year')}-${g('month')}-${g('day')}`, time:`${g('hour')==='24'?'00':g('hour')}:${g('minute')}` };
+}
 // A random identity created once on this phone and kept in the app's storage
 function deviceId(){
   let id = localStorage.getItem('pk_device');
@@ -393,7 +444,9 @@ async function doLogin(){
 }
 function message(txt){ $('msg-body').textContent = txt; show('scr-msg'); }
 async function afterLogin(user){
-  const { data } = await sb.from('app_users').select('*').eq('id', user.id);
+  if (!navigator.onLine){ if (useCache(user.id)) { show('scr-main'); APP.ready=true; renderAll(); return; } return message(t('noCache')); }
+  const { data, error: meErr } = await sb.from('app_users').select('*').eq('id', user.id);
+  if (meErr && isNetErr(meErr) && useCache(user.id)) { show('scr-main'); APP.ready=true; renderAll(); return; }
   const me = data && data[0];
   if (!me || !me.role) return message(t('noRole'));
   if (!me.active) return message(t('inactive'));
@@ -406,7 +459,9 @@ async function afterLogin(user){
     try { await sb.auth.signOut(); } catch(e){}
     return message(txt);
   }
-  show('scr-main'); await loadAll(); APP.ready = true; renderAll();
+  show('scr-main');
+  try { await loadAll(); } catch(e){ if (!useCache(user.id)) throw e; }
+  APP.ready = true; renderAll(); flushQueue();
 }
 async function firstLogin(){
   const nid=$('fl-nid').value.trim(), a=$('fl-p1').value, b=$('fl-p2').value;
@@ -446,16 +501,20 @@ async function loadAll(){
 }
 async function loadStatus(){
   const { data, error } = await sb.rpc('my_clock_status');
-  if (!error){ APP.status = data; APP.statusAt = Date.now(); }
+  if (error) throw error;
+  APP.status = data; APP.statusAt = Date.now(); APP.offline = false; APP.updatedAt = Date.now();
+  if (data && data.server_ts) store.set('pk_offset', { off: Number(data.server_ts) - Date.now(), at: Date.now() });
+  applyQueueToStatus();
   const cyc = cycleOf(APP.status ? APP.status.date : todayStr());
   const r = await sb.from('attendance').select('*').eq('emp_id', APP.me.emp_id).gte('date', periodStart(cyc)).lte('date', periodEnd(cyc)).order('date', { ascending:false });
   APP.att = r.data || [];
+  saveCache();
 }
 
 // ═════════════════════════════════════════════════════════
 //  HOME — check in / out
 // ═════════════════════════════════════════════════════════
-function serverNowMin(){ const st=APP.status; if(!st) return null; return toMin(st.now) + (Date.now()-APP.statusAt)/60000; }
+function serverNowMin(){ const st=APP.status; if(!st) return null; if (APP.offline) { const p=localParts(serverNowMs()); return toMin(p.time) + new Date().getSeconds()/60; } return toMin(st.now) + (Date.now()-APP.statusAt)/60000; }
 function tick(){
   const m = serverNowMin();
   if (m !== null){ const mm=Math.floor(m)%1440; $('clk-time').textContent = `${pad(Math.floor(mm/60))}:${pad(mm%60)}`; }
@@ -464,6 +523,7 @@ function tick(){
 }
 function renderHome(){
   const st = APP.status || {}, o = st.open;
+  $('clk-upd').textContent = APP.updatedAt ? t('updated', { t: new Date(APP.updatedAt).toLocaleTimeString(loc(), { hour:'2-digit', minute:'2-digit' }) }) : '';
   $('clk-date').textContent = st.date ? dObj(st.date).toLocaleDateString(loc(), { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : '';
   if (o){
     const notToday = o.date !== st.date;
@@ -474,10 +534,17 @@ function renderHome(){
     $('clk-state').innerHTML = `<div class="state off">${esc(t('notIn'))}</div>`;
     $('clk-btns').innerHTML = `<button class="btn green big" data-act="in">▶ ${esc(t('checkIn'))}</button>`;
   }
+  const q = queue(), pend = q.length;
+  const saved = pend ? `<div class="state warn" style="margin-top:0;text-align:start">⏳ ${esc(t('waiting', { n: pend }))}
+      ${q.map(ev => `<div style="margin-top:6px;font-size:13.5px">${ev.event_type==='in' ? '▶' : '⏹'} <b class="num">${esc(localParts(new Date(ev.client_at).getTime() + clockOffset()).time)}</b>
+        ${ev.event_type==='in' ? esc(ev.project_code ? (ev._name || ev.project_code) : t('noProject')) : esc(t('checkOut'))}
+        ${ev._err ? `<div class="neg" style="font-weight:700">✖ ${esc(t('failedItem'))}: ${esc(ev._err)} <button class="btn ghost small" data-discard="${esc(ev.client_id)}" style="margin-inline-start:6px">${esc(t('discard'))}</button></div>` : ''}</div>`).join('')}
+      ${navigator.onLine && !q[0]._err ? `<button class="btn ghost small" data-act="sync" style="margin-top:8px">${esc(t('sendNow'))}</button>` : ''}</div>` : '';
+  $('clk-state').insertAdjacentHTML('afterbegin', (APP.offline ? `<div class="state warn" style="margin-top:0">📴 ${esc(t('offlineMode'))}</div>` : '') + saved);
   const today = st.today || [];
   const tot = today.reduce((s,x)=>s+num(x.hours),0);
   $('today-list').innerHTML = today.length ? today.map(x => `<div class="it"><div class="grow"><div class="t1">${esc(x.code ? (x.name || x.code) : t('noProject'))}</div><div class="t2">${esc(x.code || '—')}</div></div>
-      <div class="num" style="font-size:14px">${esc(x.in)} – ${x.out ? esc(x.out) : `<span class="chip c-green">${esc(t('openLine'))}</span>`}</div>
+      <div class="num" style="font-size:14px">${x.pending?'⏳ ':''}${esc(x.in)} – ${x.out ? esc(x.out) : `<span class="chip c-green">${esc(t('openLine'))}</span>`}</div>
       <div class="num" style="min-width:52px;text-align:end">${x.out ? fmtH(x.hours) : ''}</div></div>`).join('')
       + `<div class="it"><div class="grow t1">${esc(t('totalToday'))}</div><div class="num">${fmtH(tot)}</div></div>`
     : `<div class="empty">${esc(t('noToday'))}</div>`;
@@ -501,10 +568,10 @@ function openSitePicker(mode){
   sheet(`<h2>${esc(t('whereWork'))}</h2>
     ${APP.status && APP.status.no_project && !openIsNone ? `<button class="btn green big" id="noproj-go" style="margin-bottom:14px">▶ ${esc(t('inNoProject'))}</button><div class="sec" style="font-size:13px;color:var(--muted)">${esc(t('orSite'))}</div>` : ''}
     ${recent.length ? `<div class="sec" style="font-size:13px;color:var(--muted)">${esc(t('recent'))}</div>${recent.filter(r=>r.code!==openCode).map(siteBtn).join('')}` : ''}
-    <div class="field" style="margin-top:12px"><input id="site-q" placeholder="${esc(t('searchSite'))}" autocomplete="off"></div>
-    <div id="site-res"><div class="hint">${esc(t('typeMore'))}</div></div>
+    ${navigator.onLine ? `<div class="field" style="margin-top:12px"><input id="site-q" placeholder="${esc(t('searchSite'))}" autocomplete="off"></div>
+    <div id="site-res"><div class="hint">${esc(t('typeMore'))}</div></div>` : `<div class="hint" style="margin-top:10px">📴 ${esc(t('offlineSites'))}</div>`}
     <button class="btn green big" id="site-go" disabled data-mode="${mode}">▶ ${esc(t('checkIn'))}</button>`);
-  $('site-q').addEventListener('input', () => { clearTimeout(searchT); searchT = setTimeout(searchSites, 300); });
+  if ($('site-q')) $('site-q').addEventListener('input', () => { clearTimeout(searchT); searchT = setTimeout(searchSites, 300); });
 }
 function siteBtn(s){ return `<button class="site" data-site="${esc(s.code||s.id)}" data-name="${esc(s.name||'')}"><b>${esc(s.name || s.code || s.id)}</b><span>${esc(s.code||s.id)}${s.location?' · '+esc(s.location):''}</span></button>`; }
 async function searchSites(){
@@ -522,24 +589,97 @@ function selectSite(btn){
 }
 function getLocation(){
   return new Promise(res => {
-    if (!navigator.geolocation) return res(null);
-    navigator.geolocation.getCurrentPosition(p => res({ lat:p.coords.latitude, lng:p.coords.longitude, accuracy:Math.round(p.coords.accuracy) }), () => res(null),
-      { enableHighAccuracy:true, timeout:9000, maximumAge:30000 });
+    if (!navigator.geolocation) return res({ err:1 });
+    navigator.geolocation.getCurrentPosition(p => res({ lat:p.coords.latitude, lng:p.coords.longitude, accuracy:Math.round(p.coords.accuracy) }),
+      e => res({ err: (e && e.code) || 2 }), { enableHighAccuracy:true, timeout: navigator.onLine ? 15000 : 30000, maximumAge:60000 });
   });
 }
+function locationHelp(code, retry){
+  const denied = code === 1;
+  sheet(`<h2>📍 ${esc(t('locTitle'))}</h2>
+    <div class="hint" style="color:var(--text)">${esc(denied ? t('locDenied') : t('locTimeout'))}</div>
+    ${denied ? `<div class="hint">${esc(isIOS() ? t('locIos') : t('locAndroid'))}</div>` : ''}
+    <button class="btn" id="loc-retry">${esc(t('tryAgain'))}</button>`);
+  $('loc-retry').onclick = retry;
+}
 async function clock(type, code, btn){
-  if (!navigator.onLine) return toast(t('offline'), true);
-  const wasOpen = !!(APP.status && APP.status.open);
+  const wasOpen = !!(APP.status && APP.status.open), label = btn ? btn.textContent : '';
   if (btn){ btn.disabled=true; btn.innerHTML = `<div class="spin"></div> ${esc(t('gettingLoc'))}`; }
   const g = await getLocation();
-  const rec = { emp_id: APP.me.emp_id, event_type:type, project_code: code || null, device_id: deviceId(), lat: g && g.lat, lng: g && g.lng, accuracy: g && g.accuracy,
+  if (btn){ btn.disabled=false; btn.textContent = label; }
+  if (g.err) return locationHelp(g.err, () => { closeSheet(); clock(type, code, null); });
+  const rec = { client_id: uid(), emp_id: APP.me.emp_id, event_type:type, project_code: code || null, device_id: deviceId(), lat:g.lat, lng:g.lng, accuracy:g.accuracy,
                 device: (navigator.userAgent || '').slice(0, 150) };
-  const { error } = await sb.from('clock_events').insert(rec);
-  if (btn) btn.disabled=false;
-  if (error){ if (btn) btn.textContent = t('checkIn'); return toast(friendly(error.message), true); }
-  closeSheet();
-  await loadStatus(); renderHome();
-  toast((type==='out' ? t('doneOut') : wasOpen ? t('doneSwitch') : t('doneIn')) + (g ? '' : ' · ' + t('noLoc')), !g && false);
+  const pendingBefore = queue().length;
+  if (navigator.onLine && !pendingBefore){
+    const { error } = await sb.from('clock_events').insert(rec);
+    if (!error){ closeSheet(); try { await loadStatus(); } catch(e){} renderHome(); return toast(type==='out' ? t('doneOut') : wasOpen ? t('doneSwitch') : t('doneIn')); }
+    if (!isNetErr(error)) return toast(friendly(error.message), true);
+  }
+  // no internet (or older check-ins still waiting): keep it on the phone, in order
+  const q = queue();
+  q.push({ ...rec, offline:true, client_at: new Date().toISOString(), _name: code ? ((pickSel && pickSel.name) || code) : '' });
+  store.set('pk_queue', q);
+  applyEvent(APP.status, q[q.length-1]); saveCache(); closeSheet(); renderHome();
+  toast(t('queued'));
+  if (navigator.onLine) flushQueue();
+}
+// Show saved-but-unsent check-ins on the home screen as if they were already recorded
+// Apply ONE saved check-in to what the home screen shows
+function applyEvent(st, ev){
+  if (!st) return; st.today = st.today || [];
+  const p = localParts(new Date(ev.client_at).getTime() + clockOffset());
+  const close = () => { if (st.open){ const seg = st.today.find(x => x.in === st.open.in && (x.code||'') === (st.open.code||'') && !x.out); if (seg){ seg.out = p.time; seg.hours = Math.max(0, (toMin(p.time)-toMin(seg.in))/60); } st.open = null; } };
+  if (ev.event_type === 'in'){ close(); const seg = { code: ev.project_code || '', name: ev._name || null, in: p.time, out: null, hours: 0, pending: true };
+    st.today.push(seg); st.open = { ...seg, date: p.date }; }
+  else close();
+}
+// After fresh data arrives from the server, re-apply everything still waiting to be sent
+function applyQueueToStatus(){ queue().forEach(ev => applyEvent(APP.status, ev)); }
+let refreshing = false;
+async function doRefresh(){
+  if (refreshing || !APP.ready) return;
+  if (!navigator.onLine) return toast(t('offline'), true);
+  refreshing = true; $('rf-ic').classList.add('spinning');
+  try { await flushQueue(); await loadAll(); renderAll(); toast(t('refreshed')); }
+  catch(e){ toast(friendly(e.message), true); }
+  refreshing = false; $('rf-ic').classList.remove('spinning');
+}
+// Pull down on the screen to refresh (the iPhone home-screen app has no built-in pull-to-refresh)
+(function pullToRefresh(){
+  let y0 = null, dy = 0;
+  const ptr = () => $('ptr'), sheetOpen = () => $('sheet').classList.contains('on');
+  document.addEventListener('touchstart', e => { if (!APP.ready || sheetOpen() || window.scrollY > 0 || !$('scr-main').classList.contains('on')) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, { passive:true });
+  document.addEventListener('touchmove', e => { if (y0 === null) return; dy = e.touches[0].clientY - y0; if (dy <= 0) { ptr().style.height='0'; return; }
+    const h = Math.min(70, dy * 0.5); ptr().style.height = h + 'px'; $('ptr-tx').textContent = dy > 110 ? t('release') : t('pull'); $('ptr-ic').style.transform = `rotate(${dy*2}deg)`; }, { passive:true });
+  document.addEventListener('touchend', async () => { if (y0 === null) return; const go = dy > 110; y0 = null;
+    if (!go) { ptr().style.height='0'; return; }
+    $('ptr-tx').textContent = t('refreshing'); $('ptr-ic').classList.add('spinning');
+    await doRefresh(); $('ptr-ic').classList.remove('spinning'); ptr().style.height='0'; });
+})();
+let flushing = false;
+async function flushQueue(){
+  if (flushing || !navigator.onLine || !sb || !APP.me) return;
+  let q = queue(); if (!q.length || q[0]._err) return;
+  flushing = true; let sent = 0, failed = false;
+  try {
+    while (q.length && !q[0]._err){
+      const { _name, _err, _off, _applied, ...rec } = q[0];
+      const { error } = await sb.from('clock_events').insert({ ...rec, device_now: new Date().toISOString() });   // the server compares the clocks
+      if (error && isNetErr(error)) break;                                  // still no connection: try later
+      if (error){ q[0]._err = friendly(error.message); store.set('pk_queue', q); failed = true; break; }   // keep it visible, stop here
+      q.shift(); store.set('pk_queue', q); sent++;
+    }
+  } catch(e){ /* offline again — everything stays saved */ }
+  flushing = false;
+  if (sent || failed){
+    try { await loadStatus(); } catch(e){}
+    renderHome();
+    toast(failed ? t('notRecorded') : t('sentNow', { n: sent }), failed);
+  }
+}
+function discardSaved(id){
+  sheet(`<h2>${esc(t('discardQ'))}</h2><div class="row"><button class="btn ghost" data-act="close">${esc(t('cancel'))}</button><button class="btn red" id="disc-go" data-id="${esc(id)}">${esc(t('discard'))}</button></div>`);
 }
 function confirmOut(){
   const o = APP.status && APP.status.open;
@@ -717,6 +857,8 @@ document.addEventListener('click', async ev => {
   const sl = x.closest('[data-slip]'); if (sl) return slipSheet(sl.dataset.slip);
   const cx = x.closest('[data-cancel]'); if (cx) return askCancel(cx.dataset.cancel);
   if (x.id === 'site-go' && pickSel) return clock('in', pickSel.code, x);
+  if (x.id === 'disc-go') { store.set('pk_queue', queue().filter(ev => ev.client_id !== x.dataset.id)); closeSheet(); try { await loadStatus(); } catch(e){} return renderHome(); }
+  const dsc = x.closest('[data-discard]'); if (dsc) return discardSaved(dsc.dataset.discard);
   if (x.id === 'noproj-go') return clock('in', null, x);
   if (x.id === 'out-go') return clock('out', null, x);
   const a = x.closest('[data-act]'); if (!a) return;
@@ -724,7 +866,8 @@ document.addEventListener('click', async ev => {
   if (act==='in' || act==='switch') return openSitePicker(act);
   if (act==='out') return confirmOut();
   if (act==='close') return closeSheet();
-  if (act==='refresh') { await loadAll(); renderAll(); return toast('✓'); }
+  if (act==='sync') return flushQueue();
+  if (act==='refresh') return doRefresh();
   if (act==='req-leave') return leaveSheet();
   if (act==='req-perm') return permSheet();
   if (act==='req-hr') return hrSheet();
@@ -735,10 +878,11 @@ document.addEventListener('click', async ev => {
 $('li-go').addEventListener('click', doLogin);
 ['li-code','li-pass'].forEach(i => $(i).addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); }));
 $('fl-go').addEventListener('click', firstLogin);
-const net = () => { $('offline').style.display = navigator.onLine ? 'none' : 'block'; };
+const net = () => { $('offline').style.display = navigator.onLine ? 'none' : 'block'; if (navigator.onLine && APP.ready) flushQueue().then(()=>{ if (APP.offline) loadAll().then(renderAll).catch(()=>{}); }); };
 window.addEventListener('online', net); window.addEventListener('offline', net);
-document.addEventListener('visibilitychange', async () => { if (document.visibilityState==='visible' && APP.ready && navigator.onLine){ await loadStatus(); renderHome(); } });
+document.addEventListener('visibilitychange', async () => { if (document.visibilityState==='visible' && APP.ready && navigator.onLine){ await flushQueue(); try { await loadStatus(); } catch(e){} renderHome(); } });
 setInterval(() => { if (APP.ready) tick(); }, 15000);
+setInterval(() => { if (APP.ready && queue().length && navigator.onLine) flushQueue(); }, 60000);
 
 (async function boot(){
   applyLang(); net();
@@ -750,7 +894,7 @@ setInterval(() => { if (APP.ready) tick(); }, 15000);
   try {
     const { data } = await sb.auth.getSession();
     if (data && data.session) await afterLogin(data.session.user); else show('scr-login');
-  } catch(e){ show('scr-login'); }
+  } catch(e){ console.warn('Petrokima start-up:', e && e.message); const c = store.get('pk_cache', null); if (c && useCache(c.uid)) { show('scr-main'); APP.ready=true; renderAll(); } else show('scr-login'); }
 })();
 </script>
 </body>

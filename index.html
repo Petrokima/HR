@@ -252,7 +252,7 @@ const T = {
   pt:{'Late arrival':'Late arrival','Early leave':'Early leave'},
   ht:{'HR letter':'HR letter','Salary certificate':'Salary certificate','Experience certificate':'Experience certificate','Update my personal data':'Update my personal data','Payslip copy':'Payslip copy','Loan request':'Loan request','Other':'Other'},
   leaveTitle:'{t} leave',attempts:'({n} attempts left)',langBtn:'العربية',
-  noProject:'No project',inNoProject:'Check in without a project',orSite:'Or choose a site',
+  noProject:'No project',inNoProject:'Check in without a project',inSite:'Check in at a site',orSite:'Or choose a site',
   installTitle:'Install the app first',installText:'For security, Petrokima must be installed on your home screen before you sign in.',
   iosSteps:'1. Tap the Share button ⬆︎ at the bottom of Safari\n2. Choose “Add to Home Screen”\n3. Open Petrokima from your home screen and sign in',
   otherDevice:'Your employee code is registered to another phone. If you changed your phone, ask HR to reset your registered phone.',
@@ -308,7 +308,7 @@ const T = {
   pt:{'Late arrival':'تأخير صباحي','Early leave':'انصراف مبكر'},
   ht:{'HR letter':'خطاب من الموارد البشرية','Salary certificate':'شهادة راتب','Experience certificate':'شهادة خبرة','Update my personal data':'تحديث بياناتي الشخصية','Payslip copy':'نسخة قسيمة راتب','Loan request':'طلب سلفة','Other':'أخرى'},
   leaveTitle:'إجازة {t}',attempts:'(متبقي {n} محاولات)',langBtn:'English',
-  noProject:'بدون مشروع',inNoProject:'تسجيل حضور بدون مشروع',orSite:'أو اختر موقعاً',
+  noProject:'بدون مشروع',inNoProject:'تسجيل حضور بدون مشروع',inSite:'تسجيل حضور في موقع',orSite:'أو اختر موقعاً',
   installTitle:'ثبّت التطبيق أولاً',installText:'لأسباب أمنية، يجب تثبيت تطبيق بتروكيما على الشاشة الرئيسية قبل تسجيل الدخول.',
   iosSteps:'١. اضغط زر المشاركة ⬆︎ أسفل متصفح سفاري\n٢. اختر «إضافة إلى الشاشة الرئيسية»\n٣. افتح بتروكيما من الشاشة الرئيسية وسجّل الدخول',
   otherDevice:'كود الموظف الخاص بك مسجّل على هاتف آخر. إذا غيّرت هاتفك، اطلب من الموارد البشرية إعادة تعيين الهاتف المسجّل.',
@@ -532,7 +532,10 @@ function renderHome(){
     $('clk-btns').innerHTML = `<div class="row"><button class="btn ghost big" data-act="switch">🔁 ${esc(t('switchSite'))}</button><button class="btn red big" data-act="out">⏹ ${esc(t('checkOut'))}</button></div>`;
   } else {
     $('clk-state').innerHTML = `<div class="state off">${esc(t('notIn'))}</div>`;
-    $('clk-btns').innerHTML = `<button class="btn green big" data-act="in">▶ ${esc(t('checkIn'))}</button>`;
+    $('clk-btns').innerHTML = st.no_project
+      ? `<div style="display:grid;gap:10px"><button class="btn green big" data-act="in">🏗 ${esc(t('inSite'))}</button>
+           <button class="btn big" id="noproj-home" style="background:#0f6f9d">▶ ${esc(t('inNoProject'))}</button></div>`
+      : `<button class="btn green big" data-act="in">▶ ${esc(t('checkIn'))}</button>`;
   }
   const q = queue(), pend = q.length;
   const saved = pend ? `<div class="state warn" style="margin-top:0;text-align:start">⏳ ${esc(t('waiting', { n: pend }))}
@@ -561,12 +564,12 @@ function renderHome(){
 // site picker
 let pickSel = null, searchT;
 function openSitePicker(mode){
-  pickSel = null;
+  pickSel = null; const fromHome = mode === 'in';
   const recent = (APP.status && APP.status.recent) || [], openCode = APP.status && APP.status.open && APP.status.open.code;
   const noProj = APP.status && APP.status.no_project && openCode !== '';
   const openIsNone = APP.status && APP.status.open && APP.status.open.code === '';
   sheet(`<h2>${esc(t('whereWork'))}</h2>
-    ${APP.status && APP.status.no_project && !openIsNone ? `<button class="btn green big" id="noproj-go" style="margin-bottom:14px">▶ ${esc(t('inNoProject'))}</button><div class="sec" style="font-size:13px;color:var(--muted)">${esc(t('orSite'))}</div>` : ''}
+    ${APP.status && APP.status.no_project && !openIsNone && !fromHome ? `<button class="btn green big" id="noproj-go" style="margin-bottom:14px">▶ ${esc(t('inNoProject'))}</button><div class="sec" style="font-size:13px;color:var(--muted)">${esc(t('orSite'))}</div>` : ''}
     ${recent.length ? `<div class="sec" style="font-size:13px;color:var(--muted)">${esc(t('recent'))}</div>${recent.filter(r=>r.code!==openCode).map(siteBtn).join('')}` : ''}
     ${navigator.onLine ? `<div class="field" style="margin-top:12px"><input id="site-q" placeholder="${esc(t('searchSite'))}" autocomplete="off"></div>
     <div id="site-res"><div class="hint">${esc(t('typeMore'))}</div></div>` : `<div class="hint" style="margin-top:10px">📴 ${esc(t('offlineSites'))}</div>`}
@@ -860,6 +863,7 @@ document.addEventListener('click', async ev => {
   if (x.id === 'disc-go') { store.set('pk_queue', queue().filter(ev => ev.client_id !== x.dataset.id)); closeSheet(); try { await loadStatus(); } catch(e){} return renderHome(); }
   const dsc = x.closest('[data-discard]'); if (dsc) return discardSaved(dsc.dataset.discard);
   if (x.id === 'noproj-go') return clock('in', null, x);
+  const nph = x.closest('#noproj-home'); if (nph) return clock('in', null, nph);
   if (x.id === 'out-go') return clock('out', null, x);
   const a = x.closest('[data-act]'); if (!a) return;
   const act = a.dataset.act;

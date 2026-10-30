@@ -2,12 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://hckkrzghxxhauotyqlqr.supabase.co wss://hckkrzghxxhauotyqlqr.supabase.co https://api.github.com https://download.petrokima-hr.com https://challenges.cloudflare.com; frame-src 'self' blob: https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Petrokima HR — دليل المدير · Manager guide</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="fonts/cairo.css?v=5.3.0" rel="stylesheet">
 <style>
 :root{--red:#E93326;--navy:#02102B;--ink:#1c2333;--muted:#5d6678;--line:#e3e6ec;--bg:#f5f6f8;--card:#fff;--soft:#fdecea}
 *{box-sizing:border-box}
@@ -111,16 +111,6 @@ body.en{direction:ltr}
 
 </main>
 <footer><span data-l="ar">أسئلة؟ تواصل مع إدارة الموارد البشرية.</span><span data-l="en">Questions? Contact the HR department.</span> · Petrokima Engineering &amp; Contracting</footer>
-<script>
-(function(){
-  var b = document.body, KEY = 'pk_guide_lang';
-  function set(l){ b.classList.toggle('en', l === 'en'); document.documentElement.lang = l; document.documentElement.dir = l === 'en' ? 'ltr' : 'rtl';
-    try { localStorage.setItem(KEY, l); } catch (e) {} }
-  var q = (location.search.match(/lang=(ar|en)/) || [])[1], s = null;
-  try { s = localStorage.getItem(KEY); } catch (e) {}
-  set(q || s || 'ar');
-  document.getElementById('lang').addEventListener('click', function(){ set(b.classList.contains('en') ? 'ar' : 'en'); });
-})();
-</script>
+<script src="managers.js?v=1"></script>
 </body>
 </html>

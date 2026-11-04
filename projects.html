@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petrokima HR — المشروعات وتسجيل الحضور · Projects and check-in</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon-192.png">
+<link href="fonts/cairo.css?v=5.3.0" rel="stylesheet">
+<!-- Guide for line managers (4 Nov 2026): give each team member the projects he checks in at, and check in at your own project.
+     Two complete halves (Arabic, then English) so the same page prints as the PDF attached to the e-mail
+     (tests/tools/make-projects-guide-pdf.js → guides/project-checkin-guide.pdf). Screenshots: the real apps with SAMPLE names. -->
+<style>
+:root{--red:#E93326;--navy:#02102B;--ink:#1c2333;--muted:#5d6678;--line:#e3e6ec;--bg:#f5f6f8;--card:#fff;--soft:#fdecea;--ok:#e8f6ee;--okline:#1f9d55}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,"Segoe UI",Tahoma,Arial,sans-serif;font-size:16px;line-height:1.7}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+header{background:var(--navy);color:#fff;padding:22px 0 26px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{background:#fff;color:var(--red);font-weight:800;letter-spacing:.5px;padding:6px 14px;border-radius:10px;font-size:18px}
+.jump{display:flex;gap:8px;flex-wrap:wrap}
+.jump a{color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:4px 14px;text-decoration:none;font-size:14px}
+h1{font-size:27px;line-height:1.35;margin:16px 0 6px}
+.sub{color:#c9cfdb;margin:0}
+main{padding:20px 0 30px}
+section.lang{margin:0 0 28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:0 0 16px}
+h2{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:center}
+h3{font-size:17px;margin:14px 0 6px}
+.num{flex:0 0 32px;height:32px;border-radius:50%;background:var(--red);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+ol,ul{margin:6px 0 0;padding-inline-start:22px}
+li{margin:4px 0}
+.b{display:inline-block;background:#eef1f6;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-weight:700;white-space:nowrap}
+.note{background:var(--soft);border-inline-start:4px solid var(--red);border-radius:10px;padding:10px 14px;margin:12px 0 0}
+.good{background:var(--ok);border-inline-start:4px solid var(--okline);border-radius:10px;padding:10px 14px;margin:12px 0 0}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin:14px 0 0}
+figure{margin:0}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:14px;background:#fff}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5}
+figure.wide{grid-column:1/-1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0 0}
+@media (max-width:640px){.two{grid-template-columns:1fr}.shots{grid-template-columns:1fr 1fr}h1{font-size:23px}}
+section.en{direction:ltr;text-align:left}
+footer{color:var(--muted);font-size:14px;text-align:center;padding:6px 16px 30px}
+@page{size:A4;margin:12mm}
+@media print{
+  body{background:#fff;font-size:12.5px;line-height:1.55}
+  header{padding:12px 0 14px;border-radius:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .jump{display:none}
+  h1{font-size:21px;margin:8px 0 4px}
+  main{padding:10px 0 0}
+  .card{break-inside:avoid;padding:12px 14px;margin:0 0 10px;border-radius:10px}
+  section.en{break-before:page}
+  .shots{grid-template-columns:repeat(4,1fr);gap:10px}
+  figure{break-inside:avoid}
+  .num,.note,.good,.b{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><span class="logo">PETROKIMA</span>
+    <nav class="jump"><a href="#ar">العربية</a><a href="#en">English</a><a href="project-checkin-guide.pdf">PDF</a></nav></div>
+  <h1>المشروعات وتسجيل الحضور · Projects and check-in</h1>
+  <p class="sub">دليل المديرين المباشرين — الهاتف والكمبيوتر · A guide for line managers — phone and computer</p>
+</div></header>
+
+<main class="wrap">
+
+<!-- ═══════════════════════════ العربية ═══════════════════════════ -->
+<section class="lang ar" id="ar" lang="ar" dir="rtl">
+
+<div class="card">
+  <h2>المطلوب منك</h2>
+  <ol>
+    <li><b>حدّد لكل فرد في فريقك المشروعات التي يعمل بها</b> — من التطبيق على الهاتف أو من الكمبيوتر (الخطوات ١ و٢).</li>
+    <li><b>وأنت نفسك: سجّل حضورك في المشروع الذي تعمل به</b> كلما كنت في موقع مشروع (الخطوة ٣).</li>
+  </ol>
+  <div class="good">لماذا؟ يُحتسب وقت كل موظف على المشروع الصحيح (تكلفة المشروعات وبدل المشروعات)، ويختار الموظف مشروعه من قائمة قصيرة بدلاً من البحث بين كل المشروعات.</div>
+  <div class="note"><b>مهم:</b> الموظف الذي حددت له مشروعات <b>يسجّل الحضور في هذه المشروعات فقط</b>. الموظف بدون مشروعات يمكنه التسجيل في أي مشروع. التعديل يُطبَّق فوراً. إذا عمل الموظف في المكتب وليس في مشروع، يسجّل حضوره كالمعتاد بدون مشروع.</div>
+</div>
+
+<div class="card">
+  <h2><span class="num">١</span> تحديد مشروعات فريقك من الهاتف</h2>
+  <ol>
+    <li>افتح تطبيق بتروكيما واضغط تبويب <span class="b">✅ الموافقات</span> في أسفل الشاشة.</li>
+    <li>انزل إلى بطاقة <span class="b">مشروعات فريقك</span>. أمام كل موظف عدد مشروعاته، أو «بدون مشروعات — يسجّل في أي مشروع».</li>
+    <li>اضغط <span class="b">إدارة</span> أمام الموظف.</li>
+    <li>في خانة البحث اكتب <b>حرفين على الأقل</b> من كود المشروع أو اسمه، ثم اضغط على المشروع (<b>+</b>) لإضافته. أضف كل المشروعات التي يعمل بها.</li>
+    <li>لإزالة مشروع لم يعد يعمل به اضغط <span class="b">✕</span> واكتب السبب (مطلوب).</li>
+  </ol>
+  <div class="shots">
+    <figure><img src="projects-img/phone-ar-1.jpg" alt="تبويب الموافقات" loading="lazy"><figcaption>١ — تبويب ✅ الموافقات</figcaption></figure>
+    <figure><img src="projects-img/phone-ar-2.jpg" alt="بطاقة مشروعات فريقك" loading="lazy"><figcaption>٢ — مشروعات فريقك ← إدارة</figcaption></figure>
+    <figure><img src="projects-img/phone-ar-3.jpg" alt="إضافة مشروع" loading="lazy"><figcaption>٣ — اكتب جزءاً من الكود أو الاسم واضغط المشروع</figcaption></figure>
+    <figure><img src="projects-img/phone-ar-4.jpg" alt="مشروعات الموظف" loading="lazy"><figcaption>٤ — مشروعات الموظف؛ ✕ للإزالة مع ذكر السبب</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٢</span> تحديد مشروعات فريقك من الكمبيوتر</h2>
+  <ol>
+    <li>افتح <b dir="ltr">hr.petrokima-hr.com</b> وسجّل الدخول بكودك وكلمة المرور.</li>
+    <li>إذا فُتح لك تطبيق الموارد البشرية الكامل، اضغط <span class="b">🙋 Me</span> أعلى يمين الشاشة.</li>
+    <li>اضغط <span class="b">✅ Team approvals</span> في القائمة العلوية، ثم انزل إلى بطاقة <span class="b">Your team's projects</span>.</li>
+    <li>اضغط <span class="b">Manage</span> أمام الموظف، واكتب حرفين على الأقل في خانة <span class="b">Add a project</span>، ثم اضغط <span class="b">+ Add</span>.</li>
+    <li>للإزالة اضغط <span class="b">⊘</span> أمام المشروع واكتب السبب.</li>
+    <li><b>لفريق كبير:</b> اضغط <span class="b">⬇ Template</span> لتنزيل ملف Excel (فيه ورقة بأكواد فريقك)، املأ كود الموظف وكود المشروع في كل سطر، ثم <span class="b">⬆ Bulk upload</span>. يعرض التطبيق نتيجة فحص كل سطر، ثم اضغط <span class="b">Save</span>.</li>
+  </ol>
+  <div class="shots">
+    <figure class="wide"><img src="projects-img/desk-1-team.jpg" alt="Your team's projects" loading="lazy"><figcaption>Team approvals ← Your team's projects ← Manage (أو Template / Bulk upload)</figcaption></figure>
+  </div>
+  <div class="two">
+    <figure><img src="projects-img/desk-2-add.jpg" alt="Add a project" loading="lazy"><figcaption>Add a project ← + Add</figcaption></figure>
+    <figure><img src="projects-img/desk-3-member.jpg" alt="مشروعات الموظف" loading="lazy"><figcaption>مشروعات الموظف؛ ⊘ للإزالة مع ذكر السبب</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٣</span> تسجيل حضورك في مشروع (لك ولفريقك)</h2>
+  <ol>
+    <li>في تبويب <span class="b">⏱ الحضور</span> اضغط <span class="b">▶ تسجيل حضور</span>.</li>
+    <li>تظهر نافذة <b>«أين تعمل الآن؟»</b>: اختر المشروع من <b>مشروعاتك</b> أو <b>المواقع الأخيرة</b>.</li>
+    <li>إذا لم يكن المشروع في القائمة، اكتب كوده أو اسمه في خانة البحث واختره.</li>
+    <li>اضغط الزر الأخضر <span class="b">تسجيل الحضور في …</span>. يُسجَّل الوقت من خادم الشركة وموقعك مع كل تسجيل.</li>
+    <li>إذا انتقلت إلى مشروع آخر في نفس اليوم اضغط <span class="b">تغيير الموقع</span> واختر المشروع الجديد.</li>
+  </ol>
+  <div class="note">إذا ظهرت رسالة «أنت غير مكلّف بهذا المشروع» فاطلب من مديرك المباشر إضافته لك (الخطوة ١ أو ٢).</div>
+  <div class="shots">
+    <figure><img src="projects-img/phone-ar-5.jpg" alt="تسجيل حضور" loading="lazy"><figcaption>١ — ⏱ الحضور ← ▶ تسجيل حضور</figcaption></figure>
+    <figure><img src="projects-img/phone-ar-6.jpg" alt="أين تعمل الآن" loading="lazy"><figcaption>٢ — اختر من مشروعاتك واضغط الزر الأخضر</figcaption></figure>
+    <figure><img src="projects-img/phone-ar-7.jpg" alt="البحث عن موقع" loading="lazy"><figcaption>٣ — أو ابحث بالكود أو الاسم</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2>إذا لم تستطع الدخول</h2>
+  <p style="margin:0">تواصل مع إدارة الموارد البشرية لتفعيل حسابك أو إعادة تعيين كلمة المرور. لتنزيل تطبيق أندرويد: <b dir="ltr">download.petrokima-hr.com</b> — ولهواتف آيفون افتح <b dir="ltr">app.petrokima-hr.com</b> في Safari ثم «إضافة إلى الشاشة الرئيسية».</p>
+</div>
+</section>
+
+<!-- ═══════════════════════════ English ═══════════════════════════ -->
+<section class="lang en" id="en" lang="en" dir="ltr">
+
+<div class="card">
+  <h2>What we ask you to do</h2>
+  <ol>
+    <li><b>Give each member of your team the projects he or she works at</b> — in the phone app or on the computer (steps 1 and 2).</li>
+    <li><b>Yourself: check in at your project</b> whenever you are at a project site (step 3).</li>
+  </ol>
+  <div class="good">Why? Everyone's time is booked to the right project (project costs and project allowances), and staff pick their project from a short list instead of searching all projects.</div>
+  <div class="note"><b>Important:</b> a team member who has projects <b>can check in only at those projects</b>. A member with no projects can check in at any project. Changes apply immediately. When someone works at the office and not at a project, they check in as usual, without a project.</div>
+</div>
+
+<div class="card">
+  <h2><span class="num">1</span> Your team's projects — on the phone</h2>
+  <ol>
+    <li>Open the Petrokima app and tap the <span class="b">✅ Approvals</span> tab at the bottom.</li>
+    <li>Scroll to the <span class="b">Your team's projects</span> card. Each person shows how many projects he has, or "No projects — can check in at any project".</li>
+    <li>Tap <span class="b">Manage</span> next to the person.</li>
+    <li>In the search box type <b>at least 2 letters</b> of the project code or name, then tap the project (<b>+</b>) to add it. Add every project he works at.</li>
+    <li>To remove a project he no longer works at, tap <span class="b">✕</span> and write the reason (required).</li>
+  </ol>
+  <div class="shots">
+    <figure><img src="projects-img/phone-en-1.jpg" alt="Approvals tab" loading="lazy"><figcaption>1 — the ✅ Approvals tab</figcaption></figure>
+    <figure><img src="projects-img/phone-en-2.jpg" alt="Your team's projects" loading="lazy"><figcaption>2 — Your team's projects → Manage</figcaption></figure>
+    <figure><img src="projects-img/phone-en-3.jpg" alt="Add a project" loading="lazy"><figcaption>3 — type part of the code or name, tap the project</figcaption></figure>
+    <figure><img src="projects-img/phone-en-4.jpg" alt="The person's projects" loading="lazy"><figcaption>4 — his projects; ✕ removes one (with a reason)</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">2</span> Your team's projects — on the computer</h2>
+  <ol>
+    <li>Open <b>hr.petrokima-hr.com</b> and sign in with your code and password.</li>
+    <li>If the full HR app opens for you, click <span class="b">🙋 Me</span> at the top right.</li>
+    <li>Click <span class="b">✅ Team approvals</span> in the top menu, then scroll to the <span class="b">Your team's projects</span> card.</li>
+    <li>Click <span class="b">Manage</span> next to the person, type at least 2 letters in <span class="b">Add a project</span>, then click <span class="b">+ Add</span>.</li>
+    <li>To remove one, click <span class="b">⊘</span> next to the project and write the reason.</li>
+    <li><b>For a large team:</b> click <span class="b">⬇ Template</span> to download an Excel file (it has a sheet with your team's codes), fill one line per employee code + project code, then <span class="b">⬆ Bulk upload</span>. The app shows the check of every line; then click <span class="b">Save</span>.</li>
+  </ol>
+  <div class="shots">
+    <figure class="wide"><img src="projects-img/desk-1-team.jpg" alt="Your team's projects" loading="lazy"><figcaption>Team approvals → Your team's projects → Manage (or Template / Bulk upload)</figcaption></figure>
+  </div>
+  <div class="two">
+    <figure><img src="projects-img/desk-2-add.jpg" alt="Add a project" loading="lazy"><figcaption>Add a project → + Add</figcaption></figure>
+    <figure><img src="projects-img/desk-3-member.jpg" alt="The person's projects" loading="lazy"><figcaption>His projects; ⊘ removes one (with a reason)</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">3</span> Checking in at a project (you and your team)</h2>
+  <ol>
+    <li>On the <span class="b">⏱ Attendance</span> tab tap <span class="b">▶ Check in</span>.</li>
+    <li>The <b>"Where are you working?"</b> window opens: pick the project under <b>Your projects</b> or <b>Recent sites</b>.</li>
+    <li>If the project is not listed, type its code or name in the search box and pick it.</li>
+    <li>Tap the green <span class="b">Check in at …</span> button. The time comes from the company server; your location is recorded with each check-in.</li>
+    <li>Moving to another project the same day? Tap <span class="b">Switch site</span> and pick the new project.</li>
+  </ol>
+  <div class="note">If you see "You are not assigned to this project", ask your direct manager to add it for you (step 1 or 2).</div>
+  <div class="shots">
+    <figure><img src="projects-img/phone-en-5.jpg" alt="Check in" loading="lazy"><figcaption>1 — ⏱ Attendance → ▶ Check in</figcaption></figure>
+    <figure><img src="projects-img/phone-en-6.jpg" alt="Where are you working?" loading="lazy"><figcaption>2 — pick from Your projects, tap the green button</figcaption></figure>
+    <figure><img src="projects-img/phone-en-7.jpg" alt="Search a site" loading="lazy"><figcaption>3 — or search by code or name</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2>If you cannot sign in</h2>
+  <p style="margin:0">Contact the HR department to activate your account or reset your password. Android app: <b>download.petrokima-hr.com</b> — on an iPhone open <b>app.petrokima-hr.com</b> in Safari, then "Add to Home Screen".</p>
+</div>
+</section>
+
+</main>
+<footer>أسئلة؟ تواصل مع إدارة الموارد البشرية · Questions? Contact the HR department · Petrokima Engineering &amp; Contracting<br><span style="font-size:12px">الصور من التطبيق الحقيقي بأسماء تجريبية · Screenshots from the real app with sample names</span></footer>
+</body>
+</html>

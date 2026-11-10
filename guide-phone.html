@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petrokima HR — تطبيق الموبايل · The phone app</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon-192.png">
+<link href="fonts/cairo.css?v=5.3.0" rel="stylesheet">
+<!-- Employee guide to the phone app (10 Nov 2026): get the app, first sign-in, check in / out, requests, payslips and profile.
+     Two complete halves (Arabic, then English) so the same page prints as the PDF attached to the welcome e-mail
+     (tests/tools/make-guide-pdfs.js → guides/guide-phone.pdf). Screenshots: the real apps with SAMPLE names, made by
+     tests/tools/make-guide-shots.js. -->
+<style>
+:root{--red:#E93326;--navy:#02102B;--ink:#1c2333;--muted:#5d6678;--line:#e3e6ec;--bg:#f5f6f8;--card:#fff;--soft:#fdecea;--ok:#e8f6ee;--okline:#1f9d55}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,"Segoe UI",Tahoma,Arial,sans-serif;font-size:16px;line-height:1.7}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+header{background:var(--navy);color:#fff;padding:22px 0 26px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{background:#fff;color:var(--red);font-weight:800;letter-spacing:.5px;padding:6px 14px;border-radius:10px;font-size:18px}
+.jump{display:flex;gap:8px;flex-wrap:wrap}
+.jump a{color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:4px 14px;text-decoration:none;font-size:14px}
+h1{font-size:27px;line-height:1.35;margin:16px 0 6px}
+.sub{color:#c9cfdb;margin:0}
+main{padding:20px 0 30px}
+section.lang{margin:0 0 28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:0 0 16px}
+h2{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:center}
+h3{font-size:17px;margin:14px 0 6px}
+.num{flex:0 0 32px;height:32px;border-radius:50%;background:var(--red);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+ol,ul{margin:6px 0 0;padding-inline-start:22px}
+li{margin:4px 0}
+.b{display:inline-block;background:#eef1f6;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-weight:700;white-space:nowrap}
+.note{background:var(--soft);border-inline-start:4px solid var(--red);border-radius:10px;padding:10px 14px;margin:12px 0 0}
+.trial{background:#fff7d6;border-color:#f0d78a}
+.trial h2{color:#7a5a00}
+.good{background:var(--ok);border-inline-start:4px solid var(--okline);border-radius:10px;padding:10px 14px;margin:12px 0 0}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin:14px 0 0}
+figure{margin:0}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:14px;background:#fff}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5}
+figure.wide{grid-column:1/-1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0 0}
+@media (max-width:640px){.two{grid-template-columns:1fr}.shots{grid-template-columns:1fr 1fr}h1{font-size:23px}}
+section.en{direction:ltr;text-align:left}
+footer{color:var(--muted);font-size:14px;text-align:center;padding:6px 16px 30px}
+@page{size:A4;margin:12mm}
+@media print{
+  body{background:#fff;font-size:12.5px;line-height:1.55}
+  header{padding:12px 0 14px;border-radius:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .jump{display:none}
+  h1{font-size:21px;margin:8px 0 4px}
+  main{padding:10px 0 0}
+  .card{break-inside:avoid;padding:12px 14px;margin:0 0 10px;border-radius:10px}
+  section.en{break-before:page}
+  .shots{grid-template-columns:repeat(4,1fr);gap:10px}
+  figure{break-inside:avoid}
+  .card{break-inside:auto}
+  .card h2{break-after:avoid}
+  .shots,.two{break-inside:avoid}
+  footer{padding:2px 16px 0;font-size:10px;line-height:1.35}
+  footer span{font-size:10px!important}
+  main{padding-bottom:0}
+  section.lang{margin-bottom:0}
+  section.lang .card:last-child{margin-bottom:6px}
+  .shots{grid-template-columns:repeat(5,1fr)}
+  .num,.note,.good,.b,.trial{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><span class="logo">PETROKIMA</span>
+    <nav class="jump"><a href="#ar">العربية</a><a href="#en">English</a><a href="guide-phone.pdf">PDF</a></nav></div>
+  <h1>تطبيق الموبايل · The phone app</h1>
+  <p class="sub">دليل الموظف — بتروكيما للموارد البشرية · Employee guide — Petrokima HR</p>
+</div></header>
+
+<main class="wrap">
+
+<!-- ═══════════════════════════ العربية ═══════════════════════════ -->
+<section class="lang ar" id="ar" lang="ar" dir="rtl">
+
+<div class="card trial">
+  <h2>فترة تجريبية</h2>
+  <p style="margin:0">التطبيق الآن في <b>فترة تجريبية</b>. <b>استمر في استخدام النظام الحالي كالمعتاد</b> (البصمة والإجراءات الحالية) <b>إلى جانب التطبيق الجديد</b>، حتى تُعلن إدارة الموارد البشرية غير ذلك.</p>
+</div>
+
+<div class="card">
+  <h2><span class="num">١</span> تنزيل التطبيق</h2>
+  <ul>
+    <li><b>أندرويد:</b> افتح <b dir="ltr">download.petrokima-hr.com</b> ونزّل تطبيق بتروكيما ثم ثبّته. على أندرويد يعمل التسجيل من التطبيق فقط وليس من المتصفح.</li>
+    <li><b>آيفون:</b> افتح <b dir="ltr">app.petrokima-hr.com</b> في <b>Safari</b>، اضغط زر المشاركة ثم <b>«إضافة إلى الشاشة الرئيسية»</b>، وافتح التطبيق من أيقونته.</li>
+  </ul>
+  <div class="note"><b>هاتف واحد لكل موظف:</b> أول هاتف تسجّل منه يصبح هاتفك. الدخول بحسابك من هاتف آخر يُرفض ويُسجَّل — لتغيير الهاتف تواصل مع الموارد البشرية.</div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٢</span> أول تسجيل دخول</h2>
+  <ol>
+    <li>اكتب <span class="b">كود الموظف</span> و<b>كلمة المرور المؤقتة</b> التي أعطتها لك الموارد البشرية، ثم اضغط <span class="b">تسجيل الدخول</span>.</li>
+    <li>في شاشة «مرحباً بك» اكتب <span class="b">سنة ميلادك</span> (٤ أرقام) للتأكد من هويتك.</li>
+    <li>اختر كلمة مرور خاصة بك: <b>٨ أحرف على الأقل، حروف وأرقام</b>، ومختلفة عن المؤقتة. اكتبها مرتين ثم اضغط <span class="b">حفظ كلمة المرور</span>.</li>
+  </ol>
+  <div class="note">الإجابات الخاطئة المتكررة لسنة الميلاد تغلق الحساب — تواصل حينها مع الموارد البشرية. لا تُعطِ كلمة المرور لأي شخص.</div>
+  <div class="shots">
+    <figure><img src="guide-phone-img/ar-1.jpg" alt="شاشة تسجيل الدخول" loading="lazy"><figcaption>١ — كود الموظف وكلمة المرور</figcaption></figure>
+    <figure><img src="guide-phone-img/ar-2.jpg" alt="أول تسجيل دخول" loading="lazy"><figcaption>٢ — سنة الميلاد وكلمة المرور الجديدة</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٣</span> تسجيل الحضور والانصراف</h2>
+  <ol>
+    <li>افتح تبويب <span class="b">⏱ الحضور</span>. تأكد أن <b>الموقع (GPS) مفعّل</b> — الموقع مطلوب مع كل تسجيل.</li>
+    <li>في موقع مشروع اضغط <span class="b">تسجيل حضور في مشروع</span>، واختر المشروع من <span class="b">مشروعاتك</span> (أو ابحث بالكود أو الاسم)، ثم اضغط الزر الأخضر <span class="b">تسجيل الحضور في …</span>.</li>
+    <li>في المكتب اضغط <span class="b">تسجيل حضور بدون مشروع</span>.</li>
+    <li>عند الانتقال إلى مشروع آخر في نفس اليوم اضغط <span class="b">تغيير الموقع</span>. عند نهاية اليوم اضغط <span class="b">تسجيل انصراف</span>.</li>
+    <li>ضغطت الانصراف بالخطأ؟ يظهر زر «↩ إلغاء الانصراف» لمدة ٥ دقائق.</li>
+  </ol>
+  <div class="good">الوقت يؤخذ من خادم الشركة، وليس من ساعة الهاتف. <b>بدون إنترنت؟</b> يُحفظ التسجيل على الهاتف ويُرسل تلقائياً بوقته الأصلي عند عودة الاتصال.</div>
+  <div class="shots">
+    <figure><img src="guide-phone-img/ar-3.jpg" alt="تبويب الحضور" loading="lazy"><figcaption>١ — ⏱ الحضور: أزرار التسجيل</figcaption></figure>
+    <figure><img src="guide-phone-img/ar-5.jpg" alt="أين تعمل الآن" loading="lazy"><figcaption>٢ — اختر المشروع واضغط الزر الأخضر</figcaption></figure>
+    <figure><img src="guide-phone-img/ar-4.jpg" alt="مسجّل حضور" loading="lazy"><figcaption>٣ — مسجّل حضور: تغيير الموقع أو الانصراف</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٤</span> الطلبات</h2>
+  <ol>
+    <li>افتح تبويب <span class="b">📋 الطلبات</span>. في الأعلى رصيد إجازتك السنوية والأذونات المستخدمة هذا الشهر.</li>
+    <li>اختر نوع الطلب: <span class="b">طلب إجازة</span>، <span class="b">إذن تأخير / انصراف مبكر</span>، <span class="b">مأمورية خارجية</span> أو <span class="b">طلب آخر من الموارد البشرية</span>.</li>
+    <li>املأ النافذة (النوع، التواريخ، السبب) — تعرض النافذة القواعد والرصيد بعد الطلب — ثم اضغط <span class="b">إرسال الطلب</span>.</li>
+    <li>تابع طلباتك تحت <span class="b">طلباتي</span>: يذهب الطلب إلى <b>مديرك المباشر</b> ثم إلى <b>الموارد البشرية</b>. يمكنك <span class="b">إلغاء</span> الطلب ما دام في الانتظار.</li>
+  </ol>
+  <div class="shots">
+    <figure><img src="guide-phone-img/ar-6.jpg" alt="تبويب الطلبات" loading="lazy"><figcaption>١ — 📋 الطلبات: الرصيد وأزرار الطلبات</figcaption></figure>
+    <figure><img src="guide-phone-img/ar-8.jpg" alt="طلب إجازة" loading="lazy"><figcaption>٢ — نافذة طلب الإجازة</figcaption></figure>
+    <figure><img src="guide-phone-img/ar-7.jpg" alt="طلباتي" loading="lazy"><figcaption>٣ — طلباتي وحالة كل طلب</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٥</span> الرواتب وحسابي</h2>
+  <ul>
+    <li><span class="b">💰 الرواتب</span>: مفرداتك محمية — اكتب كلمة المرور مرة أخرى ثم اضغط <span class="b">عرض مفرداتي</span>. تُغلق تلقائياً عند مغادرة التبويب.</li>
+    <li><span class="b">👤 حسابي</span>: بياناتك، و<span class="b">✏️ تحديث بيانات الاتصال</span> (الموبايل، البريد، العنوان)، و<span class="b">تغيير كلمة المرور</span>، و<span class="b">تسجيل الخروج</span>.</li>
+    <li><span class="b">📢 الأخبار</span>: إعلانات وقرارات الشركة. زر <span class="b">English</span> أعلى الشاشة يغيّر اللغة، و<span class="b">تحديث</span> يقرأ آخر البيانات.</li>
+  </ul>
+  <div class="shots">
+    <figure><img src="guide-phone-img/ar-9.jpg" alt="الرواتب" loading="lazy"><figcaption>١ — 💰 الرواتب: كلمة المرور أولاً</figcaption></figure>
+    <figure><img src="guide-phone-img/ar-10.jpg" alt="حسابي" loading="lazy"><figcaption>٢ — 👤 حسابي</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2>إذا احتجت مساعدة</h2>
+  <p style="margin:0">نسيت كلمة المرور، أو الحساب مغلق، أو تريد تغيير الهاتف؟ تواصل مع إدارة الموارد البشرية — أو ردّ على البريد الذي وصلك منها. يوجد أيضاً دليل لنسخة الكمبيوتر: <b dir="ltr">app.petrokima-hr.com/guide-desktop.html</b></p>
+</div>
+</section>
+
+<!-- ═══════════════════════════ English ═══════════════════════════ -->
+<section class="lang en" id="en" lang="en" dir="ltr">
+
+<div class="card trial">
+  <h2>Trial period</h2>
+  <p style="margin:0">The app is in a <b>trial period</b>. <b>Keep using the current system as usual</b> (the fingerprint machine and today's procedures) <b>alongside the new app</b>, until HR announces otherwise.</p>
+</div>
+
+<div class="card">
+  <h2><span class="num">1</span> Get the app</h2>
+  <ul>
+    <li><b>Android:</b> open <b>download.petrokima-hr.com</b>, download the Petrokima app and install it. On Android, checking in works only from the app, not from the browser.</li>
+    <li><b>iPhone:</b> open <b>app.petrokima-hr.com</b> in <b>Safari</b>, tap the Share button, then <b>"Add to Home Screen"</b>, and open the app from its icon.</li>
+  </ul>
+  <div class="note"><b>One phone per employee:</b> the first phone you sign in on becomes your phone. Signing in with your account on another phone is refused and recorded — to change phones, contact HR.</div>
+</div>
+
+<div class="card">
+  <h2><span class="num">2</span> Your first sign-in</h2>
+  <ol>
+    <li>Type your <span class="b">Employee code</span> and the <b>temporary password HR gave you</b>, then tap <span class="b">Sign in</span>.</li>
+    <li>On the "Welcome" screen type <span class="b">Your year of birth</span> (4 digits) to confirm who you are.</li>
+    <li>Choose your own password: <b>at least 8 characters, letters and numbers</b>, different from the temporary one. Type it twice and tap <span class="b">Save my password</span>.</li>
+  </ol>
+  <div class="note">Several wrong answers for the year of birth lock the account — then contact HR. Never give your password to anyone.</div>
+  <div class="shots">
+    <figure><img src="guide-phone-img/en-1.jpg" alt="Sign-in screen" loading="lazy"><figcaption>1 — employee code and password</figcaption></figure>
+    <figure><img src="guide-phone-img/en-2.jpg" alt="First sign-in" loading="lazy"><figcaption>2 — year of birth and your new password</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">3</span> Check in and check out</h2>
+  <ol>
+    <li>Open the <span class="b">⏱ Attendance</span> tab. Make sure <b>location (GPS) is on</b> — it is needed with every check-in.</li>
+    <li>At a project site tap <span class="b">Check in at a site</span>, pick the project under <span class="b">Your projects</span> (or search by code or name), then tap the green <span class="b">Check in at …</span> button.</li>
+    <li>At the office tap <span class="b">Check in without a project</span>.</li>
+    <li>Moving to another project the same day? Tap <span class="b">Switch site</span>. At the end of the day tap <span class="b">Check out</span>.</li>
+    <li>Checked out by mistake? An "↩ Undo check-out" button shows for 5 minutes.</li>
+  </ol>
+  <div class="good">The time comes from the company server, not from the phone's clock. <b>No internet?</b> The check-in is kept on the phone and sent automatically, with its original time, when the connection is back.</div>
+  <div class="shots">
+    <figure><img src="guide-phone-img/en-3.jpg" alt="Attendance tab" loading="lazy"><figcaption>1 — ⏱ Attendance: the check-in buttons</figcaption></figure>
+    <figure><img src="guide-phone-img/en-5.jpg" alt="Where are you working?" loading="lazy"><figcaption>2 — pick the project, tap the green button</figcaption></figure>
+    <figure><img src="guide-phone-img/en-4.jpg" alt="Checked in" loading="lazy"><figcaption>3 — checked in: switch site or check out</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">4</span> Requests</h2>
+  <ol>
+    <li>Open the <span class="b">📋 Requests</span> tab. At the top: your annual leave balance and the permissions used this month.</li>
+    <li>Choose what you need: <span class="b">Request vacation</span>, <span class="b">Late arrival / early leave</span>, <span class="b">Outside mission</span> or <span class="b">Other HR request</span>.</li>
+    <li>Fill in the window (type, dates, reason) — it shows the rules and your balance after the request — then tap <span class="b">Send request</span>.</li>
+    <li>Follow your requests under <span class="b">My requests</span>: a request goes to <b>your direct manager</b>, then to <b>HR</b>. You can <span class="b">Cancel</span> it while it is waiting.</li>
+  </ol>
+  <div class="shots">
+    <figure><img src="guide-phone-img/en-6.jpg" alt="Requests tab" loading="lazy"><figcaption>1 — 📋 Requests: balance and request buttons</figcaption></figure>
+    <figure><img src="guide-phone-img/en-8.jpg" alt="Request vacation" loading="lazy"><figcaption>2 — the vacation window</figcaption></figure>
+    <figure><img src="guide-phone-img/en-7.jpg" alt="My requests" loading="lazy"><figcaption>3 — My requests and their status</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">5</span> Payslips and your profile</h2>
+  <ul>
+    <li><span class="b">💰 Payslips</span>: your payslips are protected — type your password again, then tap <span class="b">Show my payslips</span>. They lock again when you leave the tab.</li>
+    <li><span class="b">👤 Profile</span>: your details, <span class="b">✏️ Update my contact details</span> (mobile, e-mail, address), <span class="b">Change password</span> and <span class="b">Sign out</span>.</li>
+    <li><span class="b">📢 News</span>: company announcements and decisions. The <span class="b">العربية</span> button at the top switches the language; <span class="b">Refresh</span> reads the latest data.</li>
+  </ul>
+  <div class="shots">
+    <figure><img src="guide-phone-img/en-9.jpg" alt="Payslips" loading="lazy"><figcaption>1 — 💰 Payslips: your password first</figcaption></figure>
+    <figure><img src="guide-phone-img/en-10.jpg" alt="Profile" loading="lazy"><figcaption>2 — 👤 Profile</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2>If you need help</h2>
+  <p style="margin:0">Forgot your password, account locked, or a new phone? Contact the HR department — or reply to the e-mail you received from HR. There is also a guide for the computer version: <b>app.petrokima-hr.com/guide-desktop.html</b></p>
+</div>
+</section>
+
+</main>
+<footer>أسئلة؟ تواصل مع إدارة الموارد البشرية · Questions? Contact the HR department · Petrokima Engineering &amp; Contracting<br><span style="font-size:12px">الصور من التطبيق الحقيقي بأسماء تجريبية · Screenshots from the real app with sample names</span></footer>
+</body>
+</html>

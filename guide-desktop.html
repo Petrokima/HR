@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petrokima HR — نسخة الكمبيوتر · The computer version</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon-192.png">
+<link href="fonts/cairo.css?v=5.3.0" rel="stylesheet">
+<!-- Employee guide to the computer version, "🙋 Me" (10 Nov 2026): sign in, my requests, my attendance, my payslips and profile.
+     Two complete halves (Arabic, then English) so the same page prints as the PDF attached to the welcome e-mail
+     (tests/tools/make-guide-pdfs.js → guides/guide-desktop.pdf). Screenshots: the real apps with SAMPLE names, made by
+     tests/tools/make-guide-shots.js. -->
+<style>
+:root{--red:#E93326;--navy:#02102B;--ink:#1c2333;--muted:#5d6678;--line:#e3e6ec;--bg:#f5f6f8;--card:#fff;--soft:#fdecea;--ok:#e8f6ee;--okline:#1f9d55}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,"Segoe UI",Tahoma,Arial,sans-serif;font-size:16px;line-height:1.7}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+header{background:var(--navy);color:#fff;padding:22px 0 26px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{background:#fff;color:var(--red);font-weight:800;letter-spacing:.5px;padding:6px 14px;border-radius:10px;font-size:18px}
+.jump{display:flex;gap:8px;flex-wrap:wrap}
+.jump a{color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:4px 14px;text-decoration:none;font-size:14px}
+h1{font-size:27px;line-height:1.35;margin:16px 0 6px}
+.sub{color:#c9cfdb;margin:0}
+main{padding:20px 0 30px}
+section.lang{margin:0 0 28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:0 0 16px}
+h2{font-size:21px;margin:0 0 8px;display:flex;gap:10px;align-items:center}
+h3{font-size:17px;margin:14px 0 6px}
+.num{flex:0 0 32px;height:32px;border-radius:50%;background:var(--red);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+ol,ul{margin:6px 0 0;padding-inline-start:22px}
+li{margin:4px 0}
+.b{display:inline-block;background:#eef1f6;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-weight:700;white-space:nowrap}
+.note{background:var(--soft);border-inline-start:4px solid var(--red);border-radius:10px;padding:10px 14px;margin:12px 0 0}
+.trial{background:#fff7d6;border-color:#f0d78a}
+.trial h2{color:#7a5a00}
+.good{background:var(--ok);border-inline-start:4px solid var(--okline);border-radius:10px;padding:10px 14px;margin:12px 0 0}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin:14px 0 0}
+figure{margin:0}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:14px;background:#fff}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5}
+figure.wide{grid-column:1/-1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0 0}
+@media (max-width:640px){.two{grid-template-columns:1fr}.shots{grid-template-columns:1fr 1fr}h1{font-size:23px}}
+section.en{direction:ltr;text-align:left}
+footer{color:var(--muted);font-size:14px;text-align:center;padding:6px 16px 30px}
+@page{size:A4;margin:12mm}
+@media print{
+  body{background:#fff;font-size:12.5px;line-height:1.55}
+  header{padding:12px 0 14px;border-radius:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .jump{display:none}
+  h1{font-size:21px;margin:8px 0 4px}
+  main{padding:10px 0 0}
+  .card{break-inside:avoid;padding:12px 14px;margin:0 0 10px;border-radius:10px}
+  section.en{break-before:page}
+  .shots{grid-template-columns:repeat(4,1fr);gap:10px}
+  figure{break-inside:avoid}
+  .card{break-inside:auto}
+  .card h2{break-after:avoid}
+  .shots,.two{break-inside:avoid}
+  footer{padding:2px 16px 0;font-size:10px;line-height:1.35}
+  footer span{font-size:10px!important}
+  main{padding-bottom:0}
+  section.lang{margin-bottom:0}
+  section.lang .card:last-child{margin-bottom:6px}
+  .two figure{max-width:64%}
+  .num,.note,.good,.b,.trial{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><span class="logo">PETROKIMA</span>
+    <nav class="jump"><a href="#ar">العربية</a><a href="#en">English</a><a href="guide-desktop.pdf">PDF</a></nav></div>
+  <h1>نسخة الكمبيوتر · The computer version</h1>
+  <p class="sub">دليل الموظف — بتروكيما للموارد البشرية · Employee guide — Petrokima HR</p>
+</div></header>
+
+<main class="wrap">
+
+<!-- ═══════════════════════════ العربية ═══════════════════════════ -->
+<section class="lang ar" id="ar" lang="ar" dir="rtl">
+
+<div class="card trial">
+  <h2>فترة تجريبية</h2>
+  <p style="margin:0">التطبيق الآن في <b>فترة تجريبية</b>. <b>استمر في استخدام النظام الحالي كالمعتاد</b> (البصمة والإجراءات الحالية) <b>إلى جانب التطبيق الجديد</b>، حتى تُعلن إدارة الموارد البشرية غير ذلك.</p>
+</div>
+
+<div class="card">
+  <h2><span class="num">١</span> الدخول من الكمبيوتر</h2>
+  <ol>
+    <li>افتح <b dir="ltr">hr.petrokima-hr.com</b> في Chrome أو Edge أو Firefox.</li>
+    <li>اكتب كود الموظف وكلمة المرور (نفس حساب الهاتف) ثم اضغط <span class="b">Sign in</span>. أول مرة؟ استخدم كلمة المرور المؤقتة من الموارد البشرية، ثم أكّد سنة ميلادك واختر كلمة مرور خاصة بك.</li>
+    <li>تظهر صفحاتك: <span class="b">My requests</span> و<span class="b">My attendance</span> و<span class="b">My payslips</span> و<span class="b">My profile</span> في القائمة العلوية.</li>
+  </ol>
+  <div class="note">للأمان يتم تسجيل خروجك تلقائياً بعد <b>١٠ دقائق</b> بدون استخدام. اضغط <span class="b">Sign out</span> عند الانتهاء، خاصة على جهاز مشترك.</div>
+  <div class="two">
+    <figure><img src="guide-desktop-img/1.jpg" alt="شاشة الدخول" loading="lazy"><figcaption>١ — كود الموظف وكلمة المرور ← Sign in</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٢</span> طلباتي — My requests</h2>
+  <ol>
+    <li>في الأعلى: رصيد إجازتك السنوية، والأذونات المستخدمة، والطلبات المفتوحة.</li>
+    <li>اختر الطلب: <span class="b">🌴 Request vacation</span> (إجازة)، <span class="b">Request late arrival / early leave</span> (إذن)، <span class="b">Outside mission</span> (مأمورية) أو <span class="b">Other HR request</span>.</li>
+    <li>اكتب التواريخ يوم/شهر/سنة (مثلاً <b dir="ltr">16112026</b>)، والسبب، ثم اضغط <span class="b">Send request</span>. تعرض النافذة أيام العمل ورصيدك بعد الطلب.</li>
+    <li>تابع الحالة في جدول <b>My requests</b>: يذهب الطلب إلى مديرك المباشر ثم الموارد البشرية. زر <b>Cancel</b> يلغي الطلب ما دام في الانتظار.</li>
+  </ol>
+  <div class="shots">
+    <figure class="wide"><img src="guide-desktop-img/2.jpg" alt="My requests" loading="lazy"><figcaption>My requests: الرصيد، أزرار الطلبات، وحالة كل طلب</figcaption></figure>
+  </div>
+  <div class="two">
+    <figure><img src="guide-desktop-img/3.jpg" alt="Request vacation" loading="lazy"><figcaption>نافذة طلب الإجازة ← Send request</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٣</span> حضوري — My attendance</h2>
+  <ul>
+    <li>تقويم الشهر: لكل يوم وقت الحضور والانصراف وعدد الساعات. <b>📱</b> = من الهاتف، <b>🖐</b> = من البصمة، وكلمة <b>late</b> للتأخير.</li>
+    <li>الأسهم ◀ ▶ للشهر السابق والتالي، و<b>Week</b> لعرض الأسبوع مع المشروعات.</li>
+  </ul>
+  <div class="shots">
+    <figure class="wide"><img src="guide-desktop-img/4.jpg" alt="My attendance" loading="lazy"><figcaption>My attendance: تقويم الشهر</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">٤</span> مفرداتي وبياناتي — My payslips · My profile</h2>
+  <ul>
+    <li><span class="b">My payslips</span>: اكتب كلمة المرور مرة أخرى ثم <span class="b">Show my payslips</span>. تُغلق عند مغادرة الصفحة.</li>
+    <li><span class="b">My profile</span>: بياناتك كما هي لدى الموارد البشرية. لتصحيح أي بيان تواصل مع الموارد البشرية، أو حدّث بيانات الاتصال من تطبيق الهاتف.</li>
+    <li>أعلى الشاشة: 🎨 لتغيير الألوان، 🔑 لتغيير كلمة المرور، و<span class="b">Sign out</span>.</li>
+    <li><b>للمديرين:</b> تظهر لك أيضاً <span class="b">Team approvals</span> لاعتماد طلبات فريقك.</li>
+  </ul>
+  <div class="two">
+    <figure><img src="guide-desktop-img/5.jpg" alt="My payslips" loading="lazy"><figcaption>My payslips: كلمة المرور أولاً</figcaption></figure>
+    <figure><img src="guide-desktop-img/6.jpg" alt="My profile" loading="lazy"><figcaption>My profile</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2>إذا احتجت مساعدة</h2>
+  <p style="margin:0">نسيت كلمة المرور أو الحساب مغلق؟ تواصل مع إدارة الموارد البشرية — أو ردّ على البريد الذي وصلك منها. تسجيل الحضور والانصراف من <b>الهاتف</b> فقط — راجع دليل الهاتف: <b dir="ltr">app.petrokima-hr.com/guide-phone.html</b></p>
+</div>
+</section>
+
+<!-- ═══════════════════════════ English ═══════════════════════════ -->
+<section class="lang en" id="en" lang="en" dir="ltr">
+
+<div class="card trial">
+  <h2>Trial period</h2>
+  <p style="margin:0">The app is in a <b>trial period</b>. <b>Keep using the current system as usual</b> (the fingerprint machine and today's procedures) <b>alongside the new app</b>, until HR announces otherwise.</p>
+</div>
+
+<div class="card">
+  <h2><span class="num">1</span> Sign in on a computer</h2>
+  <ol>
+    <li>Open <b>hr.petrokima-hr.com</b> in Chrome, Edge or Firefox.</li>
+    <li>Type your employee code and password (the same account as on the phone) and click <span class="b">Sign in</span>. First time? Use the temporary password from HR, then confirm your year of birth and choose your own password.</li>
+    <li>Your pages open: <span class="b">My requests</span>, <span class="b">My attendance</span>, <span class="b">My payslips</span> and <span class="b">My profile</span> in the menu at the top.</li>
+  </ol>
+  <div class="note">For your safety you are signed out automatically after <b>10 minutes</b> without activity. Click <span class="b">Sign out</span> when you finish, especially on a shared computer.</div>
+  <div class="two">
+    <figure><img src="guide-desktop-img/1.jpg" alt="Sign-in screen" loading="lazy"><figcaption>1 — employee code and password → Sign in</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">2</span> My requests</h2>
+  <ol>
+    <li>At the top: your annual leave balance, permissions used and open requests.</li>
+    <li>Choose the request: <span class="b">🌴 Request vacation</span>, <span class="b">Request late arrival / early leave</span>, <span class="b">Outside mission</span> or <span class="b">Other HR request</span>.</li>
+    <li>Type dates as day/month/year (for example <b>16112026</b>), the reason, then click <span class="b">Send request</span>. The window shows the working days and your balance after the request.</li>
+    <li>Follow the status in the <b>My requests</b> table: a request goes to your direct manager, then to HR. <b>Cancel</b> withdraws it while it is waiting.</li>
+  </ol>
+  <div class="shots">
+    <figure class="wide"><img src="guide-desktop-img/2.jpg" alt="My requests" loading="lazy"><figcaption>My requests: balance, request buttons and the status of each request</figcaption></figure>
+  </div>
+  <div class="two">
+    <figure><img src="guide-desktop-img/3.jpg" alt="Request vacation" loading="lazy"><figcaption>The vacation window → Send request</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">3</span> My attendance</h2>
+  <ul>
+    <li>A month calendar: each day shows your check-in, check-out and hours. <b>📱</b> = from the phone, <b>🖐</b> = from the fingerprint machine, <b>late</b> = a late arrival.</li>
+    <li>◀ ▶ move between months; <b>Week</b> shows the week with your projects.</li>
+  </ul>
+  <div class="shots">
+    <figure class="wide"><img src="guide-desktop-img/4.jpg" alt="My attendance" loading="lazy"><figcaption>My attendance: the month calendar</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="num">4</span> My payslips · My profile</h2>
+  <ul>
+    <li><span class="b">My payslips</span>: type your password again, then <span class="b">Show my payslips</span>. They lock again when you leave the page.</li>
+    <li><span class="b">My profile</span>: your details as HR has them. To correct something contact HR, or update your contact details in the phone app.</li>
+    <li>At the top: 🎨 changes the colours, 🔑 changes your password, and <span class="b">Sign out</span>.</li>
+    <li><b>Managers</b> also see <span class="b">Team approvals</span> to approve their team's requests.</li>
+  </ul>
+  <div class="two">
+    <figure><img src="guide-desktop-img/5.jpg" alt="My payslips" loading="lazy"><figcaption>My payslips: your password first</figcaption></figure>
+    <figure><img src="guide-desktop-img/6.jpg" alt="My profile" loading="lazy"><figcaption>My profile</figcaption></figure>
+  </div>
+</div>
+
+<div class="card">
+  <h2>If you need help</h2>
+  <p style="margin:0">Forgot your password or account locked? Contact the HR department — or reply to the e-mail you received from HR. Checking in and out is done on the <b>phone</b> only — see the phone guide: <b>app.petrokima-hr.com/guide-phone.html</b></p>
+</div>
+</section>
+
+</main>
+<footer>أسئلة؟ تواصل مع إدارة الموارد البشرية · Questions? Contact the HR department · Petrokima Engineering &amp; Contracting<br><span style="font-size:12px">الصور من التطبيق الحقيقي بأسماء تجريبية · Screenshots from the real app with sample names</span></footer>
+</body>
+</html>
